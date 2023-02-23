@@ -12,16 +12,17 @@ type GameState = {
 };
 
 function isCorrectAnswer(inputValue: string, currentTrack: Track) {
-    return inputValue.toLowerCase().includes(currentTrack.title.toLowerCase());
+    return inputValue.toLowerCase().includes(currentTrack.artist.toLowerCase()) || inputValue.toLowerCase().includes(currentTrack.title.toLowerCase());
 }
 
 function App(props: Props) {
     const [inputValue, setInputValue] = useState("");
+    const initialState = {
+        track: 0,
+        guesses: []
+    };
     const [state, setState] = useState<GameState>(
-        {
-            track: 0,
-            guesses: []
-        }
+        initialState
     );
     const currentTrack: Track = tracks[state.track];
     const playSongLength = 1500 + (state.guesses.length * 1500);
@@ -47,14 +48,16 @@ function App(props: Props) {
                 event.preventDefault();
             }
             }>
-                <input className={classes.input} placeholder={"Enter your guess"} type="text" value={inputValue} onChange={event => setInputValue(event.target.value)}/>
+                <input className={classes.input} placeholder={"Enter your guess"} type="text" value={inputValue}
+                       onChange={event => setInputValue(event.target.value)}/>
             </form>
             <button onClick={() => {
-                setState({... state, track: (state.track + 1 >= tracks.length) ? 0 : state.track + 1})
+                setState({...initialState, track: (state.track + 1 >= tracks.length) ? 0 : state.track + 1})
             }
             }>Skip track
             </button>
-            <SpotifyPlayer spotifyIframeApi={props.spotifyIframeApi} uri={currentTrack.uri} stopAfterMs={playSongLength}/>
+            <SpotifyPlayer spotifyIframeApi={props.spotifyIframeApi} uri={currentTrack.uri}
+                           stopAfterMs={playSongLength}/>
         </div>
     )
 }
