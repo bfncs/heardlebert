@@ -1,7 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import Game from "./Game";
 import "./index.css";
+import { fetchAccessToken, fetchPlaylist } from "./spotifyApi";
+import App from "./App";
 
 declare global {
 	interface Window {
