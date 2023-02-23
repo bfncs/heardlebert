@@ -15,6 +15,9 @@ function SpotifyPlayer(props: Props) {
 		positionMs: 0,
 	});
 	const stopAfterMs = useRef<number>(0);
+	useEffect(() => {
+		stopAfterMs.current = props.stopAfterMs;
+	}, [props.stopAfterMs]);
 
 	useEffect(() => {
 		if (player.current) {
@@ -51,9 +54,6 @@ function SpotifyPlayer(props: Props) {
 			);
 		}
 	}, []);
-	useEffect(() => {
-		stopAfterMs.current = props.stopAfterMs;
-	});
 	useEffect(() => {
 		console.log("new uri: " + props.uri);
 		embedControllerRef.current?.loadUri(props.uri);
