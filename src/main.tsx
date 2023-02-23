@@ -19,3 +19,7 @@ window.onSpotifyIframeApiReady = (spotifyIframeApi) => {
         </React.StrictMode>,
     )
 };
+
+const s = document.createElement( 'script' );
+s.setAttribute( 'src', "https://open.spotify.com/embed-podcast/iframe-api/v1" );
+document.body.appendChild( s );
