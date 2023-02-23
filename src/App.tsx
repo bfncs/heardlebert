@@ -11,6 +11,10 @@ type GameState = {
 	track: number;
 	guesses: string[];
 };
+const initialState: GameState = {
+	track: 0,
+	guesses: [],
+};
 
 function isCorrectAnswer(inputValue: string, currentTrack: Track) {
 	return (
@@ -21,13 +25,12 @@ function isCorrectAnswer(inputValue: string, currentTrack: Track) {
 
 function App(props: Props) {
 	const [inputValue, setInputValue] = useState("");
-	const initialState = {
-		track: 0,
-		guesses: [],
-	};
 	const [state, setState] = useState<GameState>(initialState);
 	const currentTrack: Track = tracks[state.track];
 	const playSongLength = 1500 + state.guesses.length * 1500;
+	const hasBeenSuccessfullyGuessed =
+		state.guesses.length > 0 &&
+		isCorrectAnswer(state.guesses[state.guesses.length - 1], currentTrack);
 	return (
 		<div className="App">
 			<h1>Guess this song</h1>
@@ -38,29 +41,41 @@ function App(props: Props) {
 					</li>
 				))}
 			</ul>
-			<form
-				onSubmit={(event) => {
-					setState({
-						...state,
-						guesses: [...state.guesses, inputValue],
-					});
-					if (isCorrectAnswer(inputValue, currentTrack)) {
-						console.log("guess correct!");
-					} else {
-						console.log("guess wrong!");
-					}
-					setInputValue("");
-					event.preventDefault();
-				}}
-			>
-				<input
-					className={classes.input}
-					placeholder={"Enter your guess"}
-					type="text"
-					value={inputValue}
-					onChange={(event) => setInputValue(event.target.value)}
-				/>
-			</form>
+			{hasBeenSuccessfullyGuessed ? (
+				<div className={classes.messageSuccess}>
+					🎉🎉🎉 You correctly guessed {currentTrack.title} by{" "}
+					{currentTrack.artist} 🎉🎉🎉
+				</div>
+			) : (
+				<form
+					onSubmit={(event) => {
+						setState({
+							...state,
+							guesses: [...state.guesses, inputValue],
+						});
+						if (isCorrectAnswer(inputValue, currentTrack)) {
+							console.log("guess correct!");
+						} else {
+							console.log("guess wrong!");
+						}
+						setInputValue("");
+						event.preventDefault();
+					}}
+				>
+					<input
+						className={classes.input}
+						placeholder={"Enter your guess"}
+						type="text"
+						value={inputValue}
+						onChange={(event) => setInputValue(event.target.value)}
+					/>
+				</form>
+			)}
+			<SpotifyPlayer
+				spotifyIframeApi={props.spotifyIframeApi}
+				uri={currentTrack.uri}
+				stopAfterMs={playSongLength}
+			/>
 			<button
 				onClick={() => {
 					setState({
@@ -69,13 +84,8 @@ function App(props: Props) {
 					});
 				}}
 			>
-				Skip track
+				Skip to next track
 			</button>
-			<SpotifyPlayer
-				spotifyIframeApi={props.spotifyIframeApi}
-				uri={currentTrack.uri}
-				stopAfterMs={playSongLength}
-			/>
 		</div>
 	);
 }
