@@ -8,7 +8,7 @@ interface Props {
 
 function SpotifyPlayer(props: Props) {
     const player = useRef<HTMLDivElement>(null);
-    const embedControllerRef = useRef<EmbedController>(null);
+    const embedControllerRef = useRef<EmbedController | null>(null);
     const [state, setState] = useState({
         isPlaying: false,
         positionMs: 0
