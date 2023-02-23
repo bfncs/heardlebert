@@ -43,7 +43,20 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 			`Unable to fetch playlist (${response.status}): ${response.body}`
 		);
 	}
-	const payload = await response.json();
+	const payload: {
+		name: string;
+		tracks: {
+			items: {
+				track: {
+					artists: {
+						name: string;
+					}[];
+					name: string;
+					uri: string;
+				};
+			}[];
+		};
+	} = await response.json();
 
 	// TODO: load other pages
 
