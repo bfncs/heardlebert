@@ -19,7 +19,7 @@ function SpotifyPlayer(props: Props) {
             props.spotifyIframeApi.createController(
                 player.current,
                 {
-                    uri: 'spotify:track:3JPcICirkAw4TLp9UzEcfl'
+                    uri: props.uri
                 },
                 (embedController) => {
                     if (!embedControllerRef.current) {
@@ -41,6 +41,12 @@ function SpotifyPlayer(props: Props) {
             );
         }
     }, []);
+    useEffect(() => {
+        console.log('new uri: ' + props.uri);
+        embedControllerRef.current?.loadUri(props.uri);
+        embedControllerRef.current?.seek(0);
+        setState({ isPlaying: false, positionMs: 0 });
+    }, [props.uri]);
 
     return (
         <div>
