@@ -23,7 +23,7 @@ async function fetchAccessToken() {
 	return payload.access_token;
 }
 
-interface Playlist {
+export interface Playlist {
 	name: string;
 	tracks: Track[];
 }

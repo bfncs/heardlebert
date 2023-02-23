@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Game from "./Game";
 import { Track } from "./tracks";
-import { fetchPlaylist } from "./spotifyApi";
+import { fetchPlaylist, Playlist } from "./spotifyApi";
+import { Simulate } from "react-dom/test-utils";
+import play = Simulate.play;
 
 function shuffle<T>(arr: T[]): T[] {
 	let j, x, i;
@@ -29,19 +31,23 @@ function getPlaylistIdFromUrl(): string | null {
 }
 
 function App(props: Props) {
-	const [tracks, setTracks] = useState<Track[]>([]);
+	const [playlist, setPlaylist] = useState<Playlist | null>(null);
 	useEffect(() => {
 		const playlistId = getPlaylistIdFromUrl() || "37i9dQZF1DWXRqgorJj26U";
 		(async () => {
 			const playlist = await fetchPlaylist(playlistId);
 			console.log("Fetched playlist", playlist);
-			setTracks(shuffle(playlist.tracks));
+			setPlaylist({ ...playlist, tracks: shuffle(playlist.tracks) });
 		})();
 	}, []);
 	return (
 		<div>
 			<h1>Guess this song</h1>
-			<Game spotifyIframeApi={props.spotifyIframeApi} tracks={tracks} />
+			<h2>{playlist?.name}</h2>
+			<Game
+				spotifyIframeApi={props.spotifyIframeApi}
+				tracks={playlist?.tracks || []}
+			/>
 		</div>
 	);
 }
