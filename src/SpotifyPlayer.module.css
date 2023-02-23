@@ -1,4 +1,3 @@
 .player {
-    position: absolute;
-    transform: translateX(-99999px) translateY(-99999px);
+    opacity: 0;
 }

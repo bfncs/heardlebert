@@ -44,14 +44,14 @@ function SpotifyPlayer(props: Props) {
 
     return (
         <div>
-            <div className={classes.player}>
-                <div ref={player} />
-            </div>
             <button onClick={() => {
                 embedControllerRef.current?.play();
             }
             } disabled={state.isPlaying}>Play</button>
             <span>{state?.positionMs ? `${(state?.positionMs / 1000).toFixed(1)}s` : "-"}</span>
+            <div className={classes.player}>
+                <div ref={player} />
+            </div>
         </div>
     )
 }
