@@ -49,12 +49,12 @@ function App(props: Props) {
             }>
                 <input className={classes.input} placeholder={"Enter your guess"} type="text" value={inputValue} onChange={event => setInputValue(event.target.value)}/>
             </form>
-            <SpotifyPlayer spotifyIframeApi={props.spotifyIframeApi} uri={currentTrack.uri} stopAfterMs={playSongLength}/>
             <button onClick={() => {
                 setState({track: (state.track + 1 >= tracks.length) ? 0 : state.track + 1})
             }
             }>Skip track
             </button>
+            <SpotifyPlayer spotifyIframeApi={props.spotifyIframeApi} uri={currentTrack.uri} stopAfterMs={playSongLength}/>
         </div>
     )
 }
