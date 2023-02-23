@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import classes from "./SpotifyPlayer.module.css";
+import { Icon } from "@blueprintjs/core";
 
 interface Props {
 	spotifyIframeApi: IframeApi;
@@ -66,11 +67,18 @@ function SpotifyPlayer(props: Props) {
 			{props.stopAfterMs}
 			<button
 				onClick={() => {
-					embedControllerRef.current?.play();
+					embedControllerRef.current?.togglePlay();
 				}}
-				disabled={state.isPlaying}
 			>
-				Play
+				{state.isPlaying ? (
+					<>
+						<Icon icon="pause" /> Pause
+					</>
+				) : (
+					<>
+						<Icon icon="play" /> Play
+					</>
+				)}
 			</button>
 			<span>
 				{state?.positionMs ? `${(state?.positionMs / 1000).toFixed(1)}s` : "-"}
