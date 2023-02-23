@@ -2,6 +2,7 @@ import SpotifyPlayer from "./SpotifyPlayer";
 import { useEffect, useState } from "react";
 import { Track } from "./tracks";
 import classes from "./Game.module.css";
+import { Spinner } from "@blueprintjs/core";
 
 interface Props {
 	spotifyIframeApi: IframeApi;
@@ -50,7 +51,11 @@ function Game(props: Props) {
 		isCorrectAnswer(state.guesses[state.guesses.length - 1], currentTrack);
 
 	if (props.tracks.length === 0) {
-		return <div>Loading...</div>;
+		return (
+			<div>
+				<Spinner />
+			</div>
+		);
 	}
 
 	return (
@@ -89,7 +94,15 @@ function Game(props: Props) {
 						type="text"
 						value={inputValue}
 						onChange={(event) => setInputValue(event.target.value)}
+						list="tracks"
 					/>
+					<datalist id="tracks">
+						{props.tracks.map((track) => (
+							<option>
+								{track.artists[0]} – {track.title}
+							</option>
+						))}
+					</datalist>
 				</form>
 			)}
 			<SpotifyPlayer
