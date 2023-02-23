@@ -1,5 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import classes from "./SpotifyPlayer.module.css";
+
 interface Props {
     spotifyIframeApi: IframeApi,
     uri: string
@@ -13,17 +14,7 @@ function SpotifyPlayer(props: Props) {
         isPlaying: false,
         positionMs: 0
     });
-
-    function handlePlaybackUpdated(event: PlaybackUpdateEvent, embedController: EmbedController) {
-        console.log('playback_update', event.data);
-        setState({isPlaying: !event.data.isPaused, positionMs: event.data.position})
-        if (!event.data.isPaused && event.data.position > props.stopAfterMs) {
-            console.log({props});
-            embedController.togglePlay();
-            embedController.seek(0);
-            setState({isPlaying: false, positionMs: 0});
-        }
-    }
+    const stopAfterMs = useRef<number>(0);
 
     useEffect(() => {
         if (player.current) {
@@ -39,13 +30,22 @@ function SpotifyPlayer(props: Props) {
                     }
                     embedController.addListener('ready', () => console.log('embed ready'));
                     embedController.addListener('playback_update', event => {
-                        handlePlaybackUpdated(event, embedController);
+                        console.log('playback_update', event.data);
+                        setState({isPlaying: !event.data.isPaused, positionMs: event.data.position})
+                        if (!event.data.isPaused && event.data.position > stopAfterMs.current) {
+                            embedController.togglePlay();
+                            embedController.seek(0);
+                            setState({isPlaying: false, positionMs: 0});
+                        }
                     });
                     console.log(props.spotifyIframeApi, embedController);
                 }
             );
         }
     }, []);
+    useEffect(() => {
+        stopAfterMs.current = props.stopAfterMs;
+    })
     useEffect(() => {
         console.log('new uri: ' + props.uri);
         embedControllerRef.current?.loadUri(props.uri);
