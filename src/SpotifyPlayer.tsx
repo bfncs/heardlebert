@@ -14,6 +14,17 @@ function SpotifyPlayer(props: Props) {
         positionMs: 0
     });
 
+    function handlePlaybackUpdated(event: PlaybackUpdateEvent, embedController: EmbedController) {
+        console.log('playback_update', event.data);
+        setState({isPlaying: !event.data.isPaused, positionMs: event.data.position})
+        if (!event.data.isPaused && event.data.position > props.stopAfterMs) {
+            console.log({props});
+            embedController.togglePlay();
+            embedController.seek(0);
+            setState({isPlaying: false, positionMs: 0});
+        }
+    }
+
     useEffect(() => {
         if (player.current) {
             props.spotifyIframeApi.createController(
@@ -28,13 +39,7 @@ function SpotifyPlayer(props: Props) {
                     }
                     embedController.addListener('ready', () => console.log('embed ready'));
                     embedController.addListener('playback_update', event => {
-                        console.log('playback_update', event.data);
-                        setState({ isPlaying: !event.data.isPaused, positionMs: event.data.position})
-                        if (!event.data.isPaused && event.data.position > props.stopAfterMs) {
-                            embedController.togglePlay();
-                            embedController.seek(0);
-                            setState({ isPlaying: false, positionMs: 0 });
-                        }
+                        handlePlaybackUpdated(event, embedController);
                     });
                     console.log(props.spotifyIframeApi, embedController);
                 }
@@ -50,6 +55,7 @@ function SpotifyPlayer(props: Props) {
 
     return (
         <div>
+            {props.stopAfterMs}
             <button onClick={() => {
                 embedControllerRef.current?.play();
             }
