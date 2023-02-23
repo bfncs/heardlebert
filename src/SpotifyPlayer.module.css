@@ -1,5 +1,9 @@
 .player {
 	opacity: 0;
-	max-height: 100px;
+	height: 1px;
+	width: 1px;
+	position: absolute;
+	right: 0;
+	bottom: 0;
 	overflow: hidden;
 }
