@@ -1,4 +1,4 @@
-interface Track {
+export interface Track {
     uri: string
     artist: string
     title: string
