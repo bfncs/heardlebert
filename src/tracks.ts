@@ -5,6 +5,11 @@ export interface Track {
 }
 export const tracks: Track[] = [
     {
+        uri: "spotify:track:3Vvn5JeFFNS5T2f7thVqYg",
+        artist: "ASD",
+        title: "Sneak Preview"
+    },
+    {
         uri: "spotify:track:5sICkBXVmaCQk5aISGR3x1",
         artist: "Metallica",
         title: "Enter Sandman"
@@ -18,6 +23,11 @@ export const tracks: Track[] = [
         uri: "spotify:track:3AJwUDP919kvQ9QcozQPxg",
         artist: "Coldplay",
         title: "Yellow"
+    },
+    {
+        uri: "spotify:track:0I3q5fE6wg7LIfHGngUTnV",
+        artist: "Outkast",
+        title: "Ms. Jackson"
     },
     {
         uri: "spotify:track:3JPcICirkAw4TLp9UzEcfl",
