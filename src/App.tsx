@@ -50,7 +50,7 @@ function App(props: Props) {
                 <input className={classes.input} placeholder={"Enter your guess"} type="text" value={inputValue} onChange={event => setInputValue(event.target.value)}/>
             </form>
             <button onClick={() => {
-                setState({track: (state.track + 1 >= tracks.length) ? 0 : state.track + 1})
+                setState({... state, track: (state.track + 1 >= tracks.length) ? 0 : state.track + 1})
             }
             }>Skip track
             </button>
