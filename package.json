@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "format": "prettier --loglevel warn --write \"**/*.{ts,tsx,css,md}\"",
+    "format": "prettier --loglevel warn --write \"**/*.{ts,tsx,css,scss,md}\"",
     "posttest": "npm run format",
     "prepare": "husky install"
   },
@@ -15,7 +15,8 @@
     "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/select": "^4.9.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "sass": "^1.58.3"
   },
   "devDependencies": {
     "@types/react": "^18.0.27",

@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Game from "./Game";
-import { Track } from "./tracks";
 import { fetchPlaylist, Playlist } from "./spotifyApi";
-import { Simulate } from "react-dom/test-utils";
-import play = Simulate.play;
 
 function shuffle<T>(arr: T[]): T[] {
 	let j, x, i;
@@ -15,6 +12,13 @@ function shuffle<T>(arr: T[]): T[] {
 	}
 	return arr;
 }
+
+type AppState = {
+	level: "easy" | "hard";
+};
+const initialState: AppState = {
+	level: "easy",
+};
 
 interface Props {
 	spotifyIframeApi: IframeApi;
@@ -31,6 +35,7 @@ function getPlaylistIdFromUrl(): string | null {
 }
 
 function App(props: Props) {
+	const [state, setState] = useState<AppState>(initialState);
 	const [playlist, setPlaylist] = useState<Playlist | null>(null);
 	useEffect(() => {
 		const playlistId = getPlaylistIdFromUrl() || "37i9dQZF1DWXRqgorJj26U";
@@ -44,9 +49,37 @@ function App(props: Props) {
 		<div>
 			<h1>Guess this song</h1>
 			<h2>{playlist?.name}</h2>
+
+			<h4>Level</h4>
+			<fieldset id="levelFieldSet">
+				<div className="radio">
+					<input
+						type="radio"
+						value="easy"
+						checked={state.level === "easy"}
+						onChange={() => {
+							setState({ ...state, level: "easy" });
+						}}
+					/>{" "}
+					Easy
+				</div>
+				<div className="radio">
+					<input
+						type="radio"
+						value="hard"
+						checked={state.level === "hard"}
+						onChange={() => {
+							setState({ ...state, level: "hard" });
+						}}
+					/>{" "}
+					Hard
+				</div>
+			</fieldset>
+
 			<Game
 				spotifyIframeApi={props.spotifyIframeApi}
 				tracks={playlist?.tracks || []}
+				level={state.level}
 			/>
 		</div>
 	);

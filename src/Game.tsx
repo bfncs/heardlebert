@@ -1,21 +1,29 @@
 import SpotifyPlayer from "./SpotifyPlayer";
 import { useEffect, useMemo, useState } from "react";
 import { Track } from "./tracks";
-import classes from "./Game.module.css";
+import classes from "./Game.module.scss";
 import { Spinner } from "@blueprintjs/core";
 
 interface Props {
 	spotifyIframeApi: IframeApi;
 	tracks: Track[];
+	level: "easy" | "hard";
+}
+
+interface track {
+	title: string;
+	artists: string[];
 }
 
 type GameState = {
 	track: number;
 	guesses: string[];
+	solution: track | null;
 };
 const initialState: GameState = {
 	track: 0,
 	guesses: [],
+	solution: null,
 };
 
 function isAnyArtistMatching(currentTrack: Track, inputValue: string) {
@@ -29,11 +37,19 @@ function isTitleMatching(inputValue: string, currentTrack: Track) {
 	return inputValue.toLowerCase().includes(currentTrack.title.toLowerCase());
 }
 
-function isCorrectAnswer(inputValue: string, currentTrack: Track) {
-	return (
-		isAnyArtistMatching(currentTrack, inputValue) ||
-		isTitleMatching(inputValue, currentTrack)
-	);
+function isCorrectAnswer(
+	inputValue: string,
+	currentTrack: Track,
+	level: "easy" | "hard" = "easy"
+) {
+	if (level === "easy") {
+		return (
+			isAnyArtistMatching(currentTrack, inputValue) &&
+			isTitleMatching(inputValue, currentTrack)
+		);
+	} else {
+		return isTitleMatching(inputValue, currentTrack);
+	}
 }
 
 function sortTracks(tracks: Track[]) {
@@ -56,7 +72,11 @@ function Game(props: Props) {
 	const playSongLength = 1500 + state.guesses.length * 1500;
 	const hasBeenSuccessfullyGuessed =
 		state.guesses.length > 0 &&
-		isCorrectAnswer(state.guesses[state.guesses.length - 1], currentTrack);
+		isCorrectAnswer(
+			state.guesses[state.guesses.length - 1],
+			currentTrack,
+			props.level
+		);
 
 	if (props.tracks.length === 0) {
 		return (
@@ -66,51 +86,119 @@ function Game(props: Props) {
 		);
 	}
 
+	function tryGuess(
+		event:
+			| React.FormEvent<HTMLFormElement>
+			| React.MouseEvent<HTMLButtonElement>
+	) {
+		setState({
+			...state,
+			guesses: [...state.guesses, inputValue],
+		});
+		if (isCorrectAnswer(inputValue, currentTrack, props.level)) {
+			console.log("guess correct!");
+		} else {
+			console.log("guess wrong!");
+		}
+		setInputValue("");
+		event.preventDefault();
+	}
+
+	function getEverythingRightText() {
+		return (
+			"You have guessed the Title „" +
+			currentTrack.title +
+			"“ and the artist " +
+			currentTrack.artists.join(" & ") +
+			"right."
+		);
+	}
+
+	function getJustArtistRightText() {
+		return (
+			"You have guessed the artist " +
+			currentTrack.artists.join(" & ") +
+			" right, but the title was „" +
+			currentTrack.title +
+			"“."
+		);
+	}
+
 	return (
 		<div>
 			<ul>
 				{state.guesses.map((guess, index) => (
-					<li key={index}>
-						{guess} {isCorrectAnswer(guess, currentTrack) ? "✅" : "❎"}
+					<li key={guess + index}>
+						{guess}{" "}
+						{isCorrectAnswer(guess, currentTrack, props.level)
+							? "✅"
+							: guess === "no guess :("
+							? ""
+							: " is wrong"}
 					</li>
 				))}
 			</ul>
+
+			{state.solution != null ? (
+				<div className={classes.lastSolution}>
+					<p>
+						The solution of the last Track was {state.solution.title} by{" "}
+						{state.solution.artists.join(" & ")}
+					</p>
+				</div>
+			) : null}
+
 			{hasBeenSuccessfullyGuessed ? (
 				<div className={classes.messageSuccess}>
-					🎉🎉🎉 You correctly guessed {currentTrack.title} by{" "}
-					{currentTrack.artists} 🎉🎉🎉
+					{isTitleMatching(inputValue, currentTrack)
+						? getEverythingRightText()
+						: getJustArtistRightText()}
 				</div>
 			) : (
 				<form
 					onSubmit={(event) => {
-						setState({
-							...state,
-							guesses: [...state.guesses, inputValue],
-						});
-						if (isCorrectAnswer(inputValue, currentTrack)) {
-							console.log("guess correct!");
-						} else {
-							console.log("guess wrong!");
-						}
-						setInputValue("");
-						event.preventDefault();
+						tryGuess(event);
 					}}
 				>
-					<input
-						className={classes.input}
-						placeholder={"Enter your guess"}
-						type="text"
-						value={inputValue}
-						onChange={(event) => setInputValue(event.target.value)}
-						list="tracks"
-					/>
-					<datalist id="tracks">
-						{sortedTracks.map((track) => (
-							<option>
-								{track.artists[0]} – {track.title}
-							</option>
-						))}
-					</datalist>
+					<div className={classes.formRow}>
+						<input
+							className={classes.input}
+							placeholder={"Enter your guess"}
+							type="text"
+							value={inputValue}
+							onChange={(event) => setInputValue(event.target.value)}
+							list="tracks"
+						/>
+						<datalist id="tracks">
+							{sortedTracks.map((track) => (
+								<option>
+									{track.artists[0]} – {track.title}
+								</option>
+							))}
+						</datalist>
+						<button
+							className={classes.submit}
+							type="submit"
+							onClick={(event) => {
+								tryGuess(event);
+							}}
+						>
+							guess
+						</button>
+
+						<button
+							className={classes.hearMore}
+							type="button"
+							onClick={() => {
+								setState({
+									...state,
+									guesses: [...state.guesses, "no guess :("],
+								});
+							}}
+						>
+							hear more
+						</button>
+					</div>
 				</form>
 			)}
 			<SpotifyPlayer
@@ -118,6 +206,7 @@ function Game(props: Props) {
 				uri={currentTrack.uri}
 				stopAfterMs={playSongLength}
 			/>
+
 			<button
 				onClick={() => {
 					console.log(
@@ -128,6 +217,10 @@ function Game(props: Props) {
 					setState({
 						...initialState,
 						track: state.track + 1 >= props.tracks.length ? 0 : state.track + 1,
+						solution: {
+							title: currentTrack.title,
+							artists: currentTrack.artists,
+						},
 					});
 				}}
 			>
