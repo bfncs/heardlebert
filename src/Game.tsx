@@ -106,21 +106,21 @@ function Game(props: Props) {
 
 	function getEverythingRightText() {
 		return (
-			"You have guessed the Title „" +
+			"🎉🎉🎉🎉🎉 You have guessed the Title „" +
 			currentTrack.title +
 			"“ and the artist " +
 			currentTrack.artists.join(" & ") +
-			"right."
+			" right. 🎉🎉🎉🎉🎉"
 		);
 	}
 
 	function getJustArtistRightText() {
 		return (
-			"You have guessed the artist " +
+			"🎉 You have guessed the artist " +
 			currentTrack.artists.join(" & ") +
 			" right, but the title was „" +
 			currentTrack.title +
-			"“."
+			"“. 🎉"
 		);
 	}
 
@@ -150,7 +150,10 @@ function Game(props: Props) {
 
 			{hasBeenSuccessfullyGuessed ? (
 				<div className={classes.messageSuccess}>
-					{isTitleMatching(inputValue, currentTrack)
+					{isTitleMatching(
+						state.guesses[state.guesses.length - 1],
+						currentTrack
+					)
 						? getEverythingRightText()
 						: getJustArtistRightText()}
 				</div>
