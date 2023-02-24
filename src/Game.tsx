@@ -227,7 +227,7 @@ function Game(props: Props) {
 					});
 				}}
 			>
-				Skip to next track
+				{hasBeenSuccessfullyGuessed ? "Get a new Song" : "Skip to next track"}
 			</button>
 		</div>
 	);

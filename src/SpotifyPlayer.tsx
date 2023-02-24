@@ -81,13 +81,15 @@ function SpotifyPlayer(props: Props) {
 				disabled={state.isLoading || state.isPlaying}
 			>
 				<Icon icon="play" />
-				Play
 				{state.isLoading ? (
 					<Spinner size={12} className={classes.spinner} />
 				) : null}
 			</button>
 			<div className={classes.progress}>
-				{state?.positionMs ? `${(state?.positionMs / 1000).toFixed(1)}s` : "-"}
+				{state?.positionMs
+					? `${Number((state?.positionMs / 1000).toPrecision(2)).toFixed(1)}s`
+					: "-"}{" "}
+				/ {(stopAfterMs.current / 1000).toFixed(1)}s
 			</div>
 			<div className={classes.player}>
 				<div ref={player} />
