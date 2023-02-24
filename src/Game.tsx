@@ -59,6 +59,21 @@ function sortTracks(tracks: Track[]) {
 	);
 }
 
+function deleteDuplicates(tracks: Track[]) {
+	const sortedTracks = sortTracks(tracks);
+	const result: Track[] = [];
+	for (let i = 0; i < sortedTracks.length; i++) {
+		if (
+			i === 0 ||
+			sortedTracks[i].artists[0] !== sortedTracks[i - 1].artists[0] ||
+			sortedTracks[i].title !== sortedTracks[i - 1].title
+		) {
+			result.push(sortedTracks[i]);
+		}
+	}
+	return result;
+}
+
 function Game(props: Props) {
 	const [state, setState] = useState<GameState>(initialState);
 	useEffect(() => {
@@ -66,7 +81,10 @@ function Game(props: Props) {
 	}, [props.tracks]);
 
 	const [inputValue, setInputValue] = useState("");
-	const sortedTracks = useMemo(() => sortTracks(props.tracks), [props.tracks]);
+	const sortedTracks = useMemo(
+		() => deleteDuplicates(props.tracks),
+		[props.tracks]
+	);
 
 	const currentTrack: Track = props.tracks[state.track];
 	const playSongLength = 1500 + state.guesses.length * 1500;
