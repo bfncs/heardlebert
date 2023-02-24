@@ -211,7 +211,7 @@ function Game(props: Props) {
 	function getNoMoreGuesses() {
 		return (
 			<>
-				<span>{state.guesses.length - 1} / 10</span>
+				<span>{state.guesses.length} / 10</span>
 				<span>You have no more guesses left</span>
 			</>
 		);
