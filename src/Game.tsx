@@ -34,7 +34,7 @@ function isAnyArtistMatching(currentTrack: Track, inputValue: string) {
 }
 
 function isTitleMatching(inputValue: string, currentTrack: Track) {
-	return inputValue.toLowerCase().includes(currentTrack.title.toLowerCase());
+	return currentTrack.title.toLowerCase().includes(inputValue.toLowerCase());
 }
 
 function isCorrectAnswer(
