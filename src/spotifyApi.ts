@@ -29,7 +29,7 @@ export interface Playlist {
 }
 export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 	const accessToken = await fetchAccessToken();
-	const response = await fetch(
+	let response = await fetch(
 		`https://api.spotify.com/v1/playlists/${playlistId}`,
 		{
 			headers: {
@@ -43,7 +43,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 			`Unable to fetch playlist (${response.status}): ${response.body}`
 		);
 	}
-	const payload: {
+	let payloadFirst: {
 		name: string;
 		tracks: {
 			items: {
@@ -55,17 +55,62 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 					uri: string;
 				};
 			}[];
+			next: string;
+			limit: number;
+			offset: number;
 		};
 	} = await response.json();
 
-	// TODO: load other pages
-
-	return {
-		name: payload.name,
-		tracks: payload.tracks.items.map((item) => ({
+	const playlist: Playlist = {
+		name: payloadFirst.name,
+		tracks: payloadFirst.tracks.items.map((item) => ({
 			artists: item.track.artists.map((artist) => artist.name),
 			title: item.track.name,
 			uri: item.track.uri,
 		})),
 	};
+	let i = 0;
+
+	if (payloadFirst.tracks.next) {
+		let payload: {
+			items: {
+				track: {
+					artists: {
+						name: string;
+					}[];
+					name: string;
+					uri: string;
+				};
+			}[];
+			next: string;
+			limit: number;
+			offset: number;
+		} = payloadFirst.tracks;
+
+		//nicht mehr als 1000 Tracks, api nicht übertreiben
+
+		while (payload.next && i < 10) {
+			i++;
+			console.log(i + ": " + payload.next);
+
+			response = await fetch(payload.next, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
+			payload = await response.json();
+
+			console.log(payload);
+
+			playlist.tracks.push(
+				...payload.items.map((item) => ({
+					artists: item.track.artists.map((artist) => artist.name),
+					title: item.track.name,
+					uri: item.track.uri,
+				}))
+			);
+		}
+	}
+
+	return playlist;
 }
