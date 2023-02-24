@@ -34,10 +34,10 @@ function SpotifyPlayer(props: Props) {
 						embedControllerRef.current = embedController;
 					}
 					embedController.addListener("ready", () =>
-						console.log("embed ready")
+						console.debug("embed ready")
 					);
 					embedController.addListener("playback_update", (event) => {
-						console.log(
+						console.debug(
 							"playback_update",
 							event.data,
 							event.data.position > stopAfterMs.current
@@ -46,7 +46,7 @@ function SpotifyPlayer(props: Props) {
 							!event.data.isPaused &&
 							event.data.position > stopAfterMs.current
 						) {
-							console.log("time over, setting back");
+							console.debug("time over, setting back");
 							embedController.pause();
 							embedController.seek(0);
 							setState({ isPlaying: false, isLoading: false, positionMs: 0 });
@@ -58,14 +58,14 @@ function SpotifyPlayer(props: Props) {
 							});
 						}
 					});
-					console.log(props.spotifyIframeApi, embedController);
+					console.debug(props.spotifyIframeApi, embedController);
 				}
 			);
 		}
 	}, []);
 
 	useEffect(() => {
-		console.log("new uri: " + props.uri);
+		console.debug("new uri: " + props.uri);
 		embedControllerRef.current?.loadUri(props.uri);
 		embedControllerRef.current?.seek(0);
 		setState({ isPlaying: false, isLoading: false, positionMs: 0 });

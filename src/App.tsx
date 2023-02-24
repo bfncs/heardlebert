@@ -41,7 +41,7 @@ function App(props: Props) {
 		const playlistId = getPlaylistIdFromUrl() || "37i9dQZF1DWXRqgorJj26U";
 		(async () => {
 			const playlist = await fetchPlaylist(playlistId);
-			console.log("Fetched playlist", playlist);
+			console.debug("Fetched playlist", playlist);
 			setPlaylist({ ...playlist, tracks: shuffle(playlist.tracks) });
 		})();
 	}, []);

@@ -90,6 +90,7 @@ function Game(props: Props) {
 	const playSongLength = 1500 + state.guesses.length * 1500;
 	const hasBeenSuccessfullyGuessed =
 		state.guesses.length > 0 &&
+		state.guesses.length < 10 &&
 		isCorrectAnswer(
 			state.guesses[state.guesses.length - 1],
 			currentTrack,
@@ -113,11 +114,6 @@ function Game(props: Props) {
 			...state,
 			guesses: [...state.guesses, inputValue],
 		});
-		if (isCorrectAnswer(inputValue, currentTrack, props.level)) {
-			console.log("guess correct!");
-		} else {
-			console.log("guess wrong!");
-		}
 		setInputValue("");
 		event.preventDefault();
 	}
@@ -142,20 +138,101 @@ function Game(props: Props) {
 		);
 	}
 
+	function getSuccessfullyGuessed() {
+		return (
+			<div className={classes.messageSuccess}>
+				{isTitleMatching(state.guesses[state.guesses.length - 1], currentTrack)
+					? getEverythingRightText()
+					: getJustArtistRightText()}
+			</div>
+		);
+	}
+
+	function getFormIfNotRightGuessed() {
+		return (
+			<form
+				onSubmit={(event) => {
+					tryGuess(event);
+				}}
+			>
+				<div className={classes.formRow}>
+					<input
+						className={classes.input}
+						placeholder={"Enter your guess"}
+						type="text"
+						value={inputValue}
+						onChange={(event) => setInputValue(event.target.value)}
+						list="tracks"
+					/>
+					<datalist id="tracks">
+						{sortedTracks.map((track) => (
+							<option>
+								{track.artists[0]} – {track.title}
+							</option>
+						))}
+					</datalist>
+					<button
+						className={classes.submit}
+						type="submit"
+						onClick={(event) => {
+							tryGuess(event);
+						}}
+					>
+						guess
+					</button>
+
+					<button
+						className={classes.hearMore}
+						type="button"
+						onClick={() => {
+							setState({
+								...state,
+								guesses: [...state.guesses, "skipped"],
+							});
+						}}
+					>
+						hear more
+					</button>
+				</div>
+			</form>
+		);
+	}
+
+	function getSolutionIfGuessedOrForm() {
+		return (
+			<>
+				{hasBeenSuccessfullyGuessed
+					? getSuccessfullyGuessed()
+					: getFormIfNotRightGuessed()}
+			</>
+		);
+	}
+
+	function getNoMoreGuesses() {
+		return (
+			<>
+				<span>{state.guesses.length - 1} / 10</span>
+				<span>You have no more guesses left</span>
+			</>
+		);
+	}
+
 	return (
 		<div>
+			<h5>Guesses: </h5>
 			<ul>
 				{state.guesses.map((guess, index) => (
 					<li key={guess + index}>
 						{guess}{" "}
 						{isCorrectAnswer(guess, currentTrack, props.level)
 							? "✅"
-							: guess === "no guess :("
+							: guess === "skipped"
 							? ""
 							: " is wrong"}
 					</li>
 				))}
 			</ul>
+			<span>You have {10 - state.guesses.length} guesses left!</span>
 
 			{state.solution != null ? (
 				<div className={classes.lastSolution}>
@@ -166,62 +243,9 @@ function Game(props: Props) {
 				</div>
 			) : null}
 
-			{hasBeenSuccessfullyGuessed ? (
-				<div className={classes.messageSuccess}>
-					{isTitleMatching(
-						state.guesses[state.guesses.length - 1],
-						currentTrack
-					)
-						? getEverythingRightText()
-						: getJustArtistRightText()}
-				</div>
-			) : (
-				<form
-					onSubmit={(event) => {
-						tryGuess(event);
-					}}
-				>
-					<div className={classes.formRow}>
-						<input
-							className={classes.input}
-							placeholder={"Enter your guess"}
-							type="text"
-							value={inputValue}
-							onChange={(event) => setInputValue(event.target.value)}
-							list="tracks"
-						/>
-						<datalist id="tracks">
-							{sortedTracks.map((track) => (
-								<option>
-									{track.artists[0]} – {track.title}
-								</option>
-							))}
-						</datalist>
-						<button
-							className={classes.submit}
-							type="submit"
-							onClick={(event) => {
-								tryGuess(event);
-							}}
-						>
-							guess
-						</button>
-
-						<button
-							className={classes.hearMore}
-							type="button"
-							onClick={() => {
-								setState({
-									...state,
-									guesses: [...state.guesses, "no guess :("],
-								});
-							}}
-						>
-							hear more
-						</button>
-					</div>
-				</form>
-			)}
+			{state.guesses.length < 10
+				? getSolutionIfGuessedOrForm()
+				: getNoMoreGuesses()}
 			<SpotifyPlayer
 				spotifyIframeApi={props.spotifyIframeApi}
 				uri={currentTrack.uri}
@@ -230,11 +254,6 @@ function Game(props: Props) {
 
 			<button
 				onClick={() => {
-					console.log(
-						`This was „${currentTrack.title}“ by ${currentTrack.artists.join(
-							" & "
-						)}`
-					);
 					setState({
 						...initialState,
 						track: state.track + 1 >= props.tracks.length ? 0 : state.track + 1,
