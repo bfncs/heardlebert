@@ -1,7 +1,7 @@
 import SpotifyPlayer from "./SpotifyPlayer";
 import { useEffect, useMemo, useState } from "react";
 import { Track } from "./tracks";
-import classes from "./Game.module.css";
+import classes from "./Game.module.scss";
 import { Spinner } from "@blueprintjs/core";
 
 interface Props {
@@ -66,11 +66,29 @@ function Game(props: Props) {
 		);
 	}
 
+	function tryGuess(
+		event:
+			| React.FormEvent<HTMLFormElement>
+			| React.MouseEvent<HTMLButtonElement>
+	) {
+		setState({
+			...state,
+			guesses: [...state.guesses, inputValue],
+		});
+		if (isCorrectAnswer(inputValue, currentTrack)) {
+			console.log("guess correct!");
+		} else {
+			console.log("guess wrong!");
+		}
+		setInputValue("");
+		event.preventDefault();
+	}
+
 	return (
 		<div>
 			<ul>
 				{state.guesses.map((guess, index) => (
-					<li key={index}>
+					<li key={guess}>
 						{guess} {isCorrectAnswer(guess, currentTrack) ? "✅" : "❎"}
 					</li>
 				))}
@@ -83,34 +101,48 @@ function Game(props: Props) {
 			) : (
 				<form
 					onSubmit={(event) => {
-						setState({
-							...state,
-							guesses: [...state.guesses, inputValue],
-						});
-						if (isCorrectAnswer(inputValue, currentTrack)) {
-							console.log("guess correct!");
-						} else {
-							console.log("guess wrong!");
-						}
-						setInputValue("");
-						event.preventDefault();
+						tryGuess(event);
 					}}
 				>
-					<input
-						className={classes.input}
-						placeholder={"Enter your guess"}
-						type="text"
-						value={inputValue}
-						onChange={(event) => setInputValue(event.target.value)}
-						list="tracks"
-					/>
-					<datalist id="tracks">
-						{sortedTracks.map((track) => (
-							<option>
-								{track.artists[0]} – {track.title}
-							</option>
-						))}
-					</datalist>
+					<div className={classes.formRow}>
+						<input
+							className={classes.input}
+							placeholder={"Enter your guess"}
+							type="text"
+							value={inputValue}
+							onChange={(event) => setInputValue(event.target.value)}
+							list="tracks"
+						/>
+						<datalist id="tracks">
+							{sortedTracks.map((track) => (
+								<option>
+									{track.artists[0]} – {track.title}
+								</option>
+							))}
+						</datalist>
+
+						<button
+							className={classes.hearMore}
+							type="button"
+							onClick={() => {
+								setState({
+									...state,
+									guesses: [...state.guesses, "Übersprungen"],
+								});
+							}}
+						>
+							Mehr hören (+1.5 Sekunden)
+						</button>
+						<button
+							className={classes.submit}
+							type="submit"
+							onClick={(event) => {
+								tryGuess(event);
+							}}
+						>
+							Lösung einreichen
+						</button>
+					</div>
 				</form>
 			)}
 			<SpotifyPlayer
@@ -118,6 +150,7 @@ function Game(props: Props) {
 				uri={currentTrack.uri}
 				stopAfterMs={playSongLength}
 			/>
+
 			<button
 				onClick={() => {
 					console.log(
