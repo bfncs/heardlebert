@@ -97,11 +97,17 @@ function Game(props: Props) {
 						list="tracks"
 					/>
 					<datalist id="tracks">
-						{props.tracks.map((track) => (
-							<option>
-								{track.artists[0]} – {track.title}
-							</option>
-						))}
+						{props.tracks
+							.sort(
+								(a, b) =>
+									a.artists[0].localeCompare(b.artists[0]) ||
+									a.title.localeCompare(b.title)
+							)
+							.map((track) => (
+								<option>
+									{track.artists[0]} – {track.title}
+								</option>
+							))}
 					</datalist>
 				</form>
 			)}

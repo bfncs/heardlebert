@@ -13,6 +13,7 @@ declare class EmbedController {
 		cb: (event: PlaybackUpdateEvent) => void
 	): void;
 	play(): void;
+	pause(): void;
 	togglePlay(): void;
 
 	seek(positionSeconds: number): void;
