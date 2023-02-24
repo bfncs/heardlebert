@@ -1,5 +1,5 @@
 import SpotifyPlayer from "./SpotifyPlayer";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Track } from "./tracks";
 import classes from "./Game.module.css";
 import { Spinner } from "@blueprintjs/core";
@@ -36,6 +36,13 @@ function isCorrectAnswer(inputValue: string, currentTrack: Track) {
 	);
 }
 
+function sortTracks(tracks: Track[]) {
+	return [...tracks].sort(
+		(a, b) =>
+			a.artists[0].localeCompare(b.artists[0]) || a.title.localeCompare(b.title)
+	);
+}
+
 function Game(props: Props) {
 	const [state, setState] = useState<GameState>(initialState);
 	useEffect(() => {
@@ -43,6 +50,7 @@ function Game(props: Props) {
 	}, [props.tracks]);
 
 	const [inputValue, setInputValue] = useState("");
+	const sortedTracks = useMemo(() => sortTracks(props.tracks), [props.tracks]);
 
 	const currentTrack: Track = props.tracks[state.track];
 	const playSongLength = 1500 + state.guesses.length * 1500;
@@ -97,17 +105,11 @@ function Game(props: Props) {
 						list="tracks"
 					/>
 					<datalist id="tracks">
-						{props.tracks
-							.sort(
-								(a, b) =>
-									a.artists[0].localeCompare(b.artists[0]) ||
-									a.title.localeCompare(b.title)
-							)
-							.map((track) => (
-								<option>
-									{track.artists[0]} – {track.title}
-								</option>
-							))}
+						{sortedTracks.map((track) => (
+							<option>
+								{track.artists[0]} – {track.title}
+							</option>
+						))}
 					</datalist>
 				</form>
 			)}
