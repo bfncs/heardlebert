@@ -69,7 +69,6 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 			uri: item.track.uri,
 		})),
 	};
-	let i = 0;
 
 	if (payloadFirst.tracks.next) {
 		let payload: {
@@ -89,18 +88,15 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 
 		//nicht mehr als 1000 Tracks, api nicht übertreiben
 
+		let i = 0;
 		while (payload.next && i < 10) {
 			i++;
-			console.log(i + ": " + payload.next);
-
 			response = await fetch(payload.next, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`,
 				},
 			});
 			payload = await response.json();
-
-			console.log(payload);
 
 			playlist.tracks.push(
 				...payload.items.map((item) => ({
@@ -111,6 +107,5 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 			);
 		}
 	}
-
 	return playlist;
 }
