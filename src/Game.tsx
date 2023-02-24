@@ -42,7 +42,7 @@ function isCorrectAnswer(
 	currentTrack: Track,
 	level: "easy" | "hard" = "easy"
 ) {
-	if (level === "easy") {
+	if (level === "hard") {
 		return (
 			isAnyArtistMatching(currentTrack, inputValue) &&
 			isTitleMatching(inputValue, currentTrack)
