@@ -9,13 +9,20 @@ interface Props {
 	tracks: Track[];
 }
 
+interface track {
+	title: string;
+	artists: string[];
+}
+
 type GameState = {
 	track: number;
 	guesses: string[];
+	solution: track | null;
 };
 const initialState: GameState = {
 	track: 0,
 	guesses: [],
+	solution: null,
 };
 
 function isAnyArtistMatching(currentTrack: Track, inputValue: string) {
@@ -29,11 +36,19 @@ function isTitleMatching(inputValue: string, currentTrack: Track) {
 	return inputValue.toLowerCase().includes(currentTrack.title.toLowerCase());
 }
 
-function isCorrectAnswer(inputValue: string, currentTrack: Track) {
-	return (
-		isAnyArtistMatching(currentTrack, inputValue) ||
-		isTitleMatching(inputValue, currentTrack)
-	);
+function isCorrectAnswer(
+	inputValue: string,
+	currentTrack: Track,
+	level: "easy" | "hard" = "easy"
+) {
+	if (level === "easy") {
+		return (
+			isAnyArtistMatching(currentTrack, inputValue) &&
+			isTitleMatching(inputValue, currentTrack)
+		);
+	} else {
+		return isTitleMatching(inputValue, currentTrack);
+	}
 }
 
 function sortTracks(tracks: Track[]) {
@@ -84,19 +99,55 @@ function Game(props: Props) {
 		event.preventDefault();
 	}
 
+	function getEverythingRightText() {
+		return (
+			"You have guessed the Title " +
+			currentTrack.title +
+			" and the artist " +
+			currentTrack.artists.join(" & ") +
+			"right"
+		);
+	}
+
+	function getJustArtistRightText() {
+		return (
+			"You have guessed the artist " +
+			currentTrack.artists.join(" & ") +
+			"right, but the title was" +
+			currentTrack.title +
+			"."
+		);
+	}
+
 	return (
 		<div>
 			<ul>
 				{state.guesses.map((guess, index) => (
 					<li key={guess}>
-						{guess} {isCorrectAnswer(guess, currentTrack) ? "✅" : "❎"}
+						{guess}{" "}
+						{isCorrectAnswer(guess, currentTrack)
+							? "✅"
+							: guess === "no guess :("
+							? ""
+							: " is wrong"}
 					</li>
 				))}
 			</ul>
+
+			{state.solution != null ? (
+				<div className={classes.lastSolution}>
+					<p>
+						The solution of the last Track was {state.solution.title} by{" "}
+						{state.solution.artists.join(" & ")}
+					</p>
+				</div>
+			) : null}
+
 			{hasBeenSuccessfullyGuessed ? (
 				<div className={classes.messageSuccess}>
-					🎉🎉🎉 You correctly guessed {currentTrack.title} by{" "}
-					{currentTrack.artists} 🎉🎉🎉
+					{isTitleMatching(inputValue, currentTrack)
+						? getEverythingRightText()
+						: getJustArtistRightText()}
 				</div>
 			) : (
 				<form
@@ -120,19 +171,6 @@ function Game(props: Props) {
 								</option>
 							))}
 						</datalist>
-
-						<button
-							className={classes.hearMore}
-							type="button"
-							onClick={() => {
-								setState({
-									...state,
-									guesses: [...state.guesses, "Übersprungen"],
-								});
-							}}
-						>
-							Mehr hören (+1.5 Sekunden)
-						</button>
 						<button
 							className={classes.submit}
 							type="submit"
@@ -140,7 +178,20 @@ function Game(props: Props) {
 								tryGuess(event);
 							}}
 						>
-							Lösung einreichen
+							guess
+						</button>
+
+						<button
+							className={classes.hearMore}
+							type="button"
+							onClick={() => {
+								setState({
+									...state,
+									guesses: [...state.guesses, "no guess :("],
+								});
+							}}
+						>
+							hear more
 						</button>
 					</div>
 				</form>
@@ -161,6 +212,10 @@ function Game(props: Props) {
 					setState({
 						...initialState,
 						track: state.track + 1 >= props.tracks.length ? 0 : state.track + 1,
+						solution: {
+							title: currentTrack.title,
+							artists: currentTrack.artists,
+						},
 					});
 				}}
 			>
