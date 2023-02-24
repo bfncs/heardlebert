@@ -7,6 +7,7 @@ import { Spinner } from "@blueprintjs/core";
 interface Props {
 	spotifyIframeApi: IframeApi;
 	tracks: Track[];
+	level: "easy" | "hard";
 }
 
 interface track {
@@ -71,7 +72,11 @@ function Game(props: Props) {
 	const playSongLength = 1500 + state.guesses.length * 1500;
 	const hasBeenSuccessfullyGuessed =
 		state.guesses.length > 0 &&
-		isCorrectAnswer(state.guesses[state.guesses.length - 1], currentTrack);
+		isCorrectAnswer(
+			state.guesses[state.guesses.length - 1],
+			currentTrack,
+			props.level
+		);
 
 	if (props.tracks.length === 0) {
 		return (
@@ -90,7 +95,7 @@ function Game(props: Props) {
 			...state,
 			guesses: [...state.guesses, inputValue],
 		});
-		if (isCorrectAnswer(inputValue, currentTrack)) {
+		if (isCorrectAnswer(inputValue, currentTrack, props.level)) {
 			console.log("guess correct!");
 		} else {
 			console.log("guess wrong!");
@@ -101,11 +106,11 @@ function Game(props: Props) {
 
 	function getEverythingRightText() {
 		return (
-			"You have guessed the Title " +
+			"You have guessed the Title „" +
 			currentTrack.title +
-			" and the artist " +
+			"“ and the artist " +
 			currentTrack.artists.join(" & ") +
-			"right"
+			"right."
 		);
 	}
 
@@ -113,9 +118,9 @@ function Game(props: Props) {
 		return (
 			"You have guessed the artist " +
 			currentTrack.artists.join(" & ") +
-			"right, but the title was" +
+			" right, but the title was „" +
 			currentTrack.title +
-			"."
+			"“."
 		);
 	}
 
@@ -123,9 +128,9 @@ function Game(props: Props) {
 		<div>
 			<ul>
 				{state.guesses.map((guess, index) => (
-					<li key={guess}>
+					<li key={guess + index}>
 						{guess}{" "}
-						{isCorrectAnswer(guess, currentTrack)
+						{isCorrectAnswer(guess, currentTrack, props.level)
 							? "✅"
 							: guess === "no guess :("
 							? ""
