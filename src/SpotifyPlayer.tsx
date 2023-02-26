@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import classes from "./SpotifyPlayer.module.css";
+import classes from "./SpotifyPlayer.module.scss";
 import { Icon, Spinner } from "@blueprintjs/core";
 
 interface Props {
@@ -73,26 +73,35 @@ function SpotifyPlayer(props: Props) {
 
 	return (
 		<div className={classes.wrapper}>
-			<button
-				onClick={() => {
-					embedControllerRef.current?.play();
-					setState({ ...state, isLoading: true });
-				}}
-				disabled={state.isLoading || state.isPlaying}
-			>
-				<Icon icon="play" />
+			<div className={classes.playContainer}></div>
+			<div className={classes.buttonAndContainerDescription}>
+				<span className={classes.times}>1.5s</span>
+
 				{state.isLoading ? (
 					<Spinner size={12} className={classes.spinner} />
-				) : null}
-			</button>
-			<div className={classes.progress}>
-				{state?.positionMs
-					? `${Number((state?.positionMs / 1000).toPrecision(2)).toFixed(1)}s`
-					: "-"}{" "}
-				/ {(stopAfterMs.current / 1000).toFixed(1)}s
-			</div>
-			<div className={classes.player}>
-				<div ref={player} />
+				) : (
+					<button
+						className={classes.playButton}
+						onClick={() => {
+							embedControllerRef.current?.play();
+							setState({ ...state, isLoading: true });
+						}}
+						disabled={state.isLoading || state.isPlaying}
+					/>
+				)}
+
+				<span className={classes.times}>15s</span>
+
+				<div className={classes.player}>
+					<div ref={player} />
+				</div>
+
+				{/*<div className={classes.progress}>
+					{state?.positionMs
+						? `${Number((state?.positionMs / 1000).toPrecision(2)).toFixed(1)}s`
+						: "-"}{" "}
+					/ {(stopAfterMs.current / 1000).toFixed(1)}s
+				</div>*/}
 			</div>
 		</div>
 	);

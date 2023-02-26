@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Game from "./Game";
 import { fetchPlaylist, Playlist } from "./spotifyApi";
+import classes from "./App.module.scss";
 
 function shuffle<T>(arr: T[]): T[] {
 	let j, x, i;
@@ -47,34 +48,27 @@ function App(props: Props) {
 	}, []);
 	return (
 		<div>
-			<h1>Guess this song</h1>
-			<h2>{playlist?.name}</h2>
-
-			<h4>Level</h4>
-			<fieldset id="levelFieldSet">
-				<div className="radio">
-					<input
-						type="radio"
-						value="easy"
-						checked={state.level === "easy"}
-						onChange={() => {
-							setState({ ...state, level: "easy" });
-						}}
-					/>{" "}
-					Easy
-				</div>
-				<div className="radio">
-					<input
-						type="radio"
-						value="hard"
-						checked={state.level === "hard"}
-						onChange={() => {
-							setState({ ...state, level: "hard" });
-						}}
-					/>{" "}
-					Hard
-				</div>
-			</fieldset>
+			<div className={classes.headlines}>
+				<h1>Heardlebert</h1>
+				<h2>Guess this song</h2>
+			</div>
+			<span>
+				The songs are chosen from the playlist <b>{playlist?.name}</b> <br />
+				and you play on &nbsp;
+				<select
+					value={state.level}
+					onChange={(event) => {
+						setState({
+							...state,
+							level: event.target.value as "easy" | "hard",
+						});
+					}}
+				>
+					<option value="easy">Easy</option>
+					<option value="hard">Hard</option>
+				</select>{" "}
+				difficulty.
+			</span>
 
 			<Game
 				spotifyIframeApi={props.spotifyIframeApi}

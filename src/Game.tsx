@@ -158,7 +158,7 @@ function Game(props: Props) {
 				<div className={classes.formRow}>
 					<input
 						className={classes.input}
-						placeholder={"Enter your guess"}
+						placeholder={"search for artist / song title"}
 						type="text"
 						value={inputValue}
 						onChange={(event) => setInputValue(event.target.value)}
@@ -171,16 +171,8 @@ function Game(props: Props) {
 							</option>
 						))}
 					</datalist>
-					<button
-						className={classes.submit}
-						type="submit"
-						onClick={(event) => {
-							tryGuess(event);
-						}}
-					>
-						guess
-					</button>
-
+				</div>
+				<div className={classes.formButtons}>
 					<button
 						className={classes.hearMore}
 						type="button"
@@ -191,7 +183,17 @@ function Game(props: Props) {
 							});
 						}}
 					>
-						hear more
+						Skip (+ 1.5)
+					</button>
+
+					<button
+						className={classes.submit}
+						type="submit"
+						onClick={(event) => {
+							tryGuess(event);
+						}}
+					>
+						Submit
 					</button>
 				</div>
 			</form>
@@ -208,33 +210,24 @@ function Game(props: Props) {
 		);
 	}
 
-	function getNoMoreGuesses() {
-		return (
-			<>
-				<span>{state.guesses.length} / 10</span>
-				<span>You have no more guesses left</span>
-			</>
-		);
-	}
-
 	return (
-		<div>
-			<h5>Guesses: </h5>
-			<ul>
-				{state.guesses.map((guess, index) => (
-					<li key={guess + index}>
-						{guess}{" "}
-						{isCorrectAnswer(guess, currentTrack, props.level)
-							? "✅"
-							: guess === "skipped"
-							? ""
-							: " is wrong"}
-					</li>
-				))}
-			</ul>
-			<span>You have {10 - state.guesses.length} guesses left!</span>
+		<div className={classes.game}>
+			{!hasBeenSuccessfullyGuessed ? (
+				<>
+					<span>
+						You have <b>{10 - state.guesses.length} guesses left</b>
+					</span>
+					<ol className={classes.guessList}>
+						{state.guesses.map((guess, index) => (
+							<li key={index} className={classes.guessListItem}>
+								{index + 1 + ". " + guess}
+							</li>
+						))}
+					</ol>
+				</>
+			) : null}
 
-			{state.solution != null ? (
+			{state.solution != null && !hasBeenSuccessfullyGuessed ? (
 				<div className={classes.lastSolution}>
 					<p>
 						The solution of the last Track was {state.solution.title} by{" "}
@@ -243,16 +236,18 @@ function Game(props: Props) {
 				</div>
 			) : null}
 
-			{state.guesses.length < 10
-				? getSolutionIfGuessedOrForm()
-				: getNoMoreGuesses()}
 			<SpotifyPlayer
 				spotifyIframeApi={props.spotifyIframeApi}
 				uri={currentTrack.uri}
 				stopAfterMs={playSongLength}
 			/>
 
+			{state.guesses.length < 10 ? (
+				<div className={classes.gameForm}>{getSolutionIfGuessedOrForm()}</div>
+			) : null}
+
 			<button
+				className={classes.nextTrack}
 				onClick={() => {
 					setState({
 						...initialState,

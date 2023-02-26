@@ -1,7 +1,16 @@
 .input {
 	width: 100%;
-	font-size: 1em;
+	font-size: 24px;
+	color: #666666;
 	line-height: 1.5;
+	border: 3px solid #E6E6E6;
+	border-radius: 8px;
+	height:48px;
+	padding: 9px 32px;
+}
+
+.game {
+	margin-top: 10px;
 }
 
 .messageSuccess {
@@ -15,4 +24,95 @@
 	align-items: center;
 	justify-content: center;
 	gap: 25px;
+}
+
+.formButtons {
+	margin-top: 10px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: 25px;
+
+
+	.hearMore {
+		background: #FFFFFF;
+		border: 3px solid #000000;
+		border-radius: 8px;
+		color: #000000;
+		height: 48px;
+		width: 155px;
+		font-size: 24px;
+		font-weight: 600;
+
+		cursor: pointer;
+
+		&:hover {
+			background: #646cff;
+			border: 3px solid #646cff;
+			color: #FFFFFF;
+		}
+
+	}
+
+	.submit {
+		background: #000000;
+		border: 3px solid #000000;
+		border-radius: 8px;
+		color: #FFFFFF;
+		height: 48px;
+		width: 155px;
+		font-size: 24px;
+		font-weight: 600;
+		cursor: pointer;
+
+		&:hover {
+			background: #646cff;
+			border: 3px solid #646cff;
+		}
+
+	}
+}
+
+.guessList {
+	box-sizing: border-box;
+	height: 272px;
+	width: 100%;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding: 0 24px;
+	gap: 16px;
+	border: 3px solid #E6E6E6;
+	border-radius: 8px;
+	list-style-type: none;
+
+	.guessListItem {
+		font-size: 24px;
+		font-weight: 400;
+		color: #000000;
+	}
+}
+
+.nextTrack {
+	margin-top: 10px;
+	background: #FFFFFF;
+	border: 3px solid #000000;
+	border-radius: 8px;
+	color: #000000;
+	height: 48px;
+	width: auto;
+	font-size: 24px;
+	font-weight: 600;
+	cursor: pointer;
+	align-self: center;
+
+	&:hover {
+		background: #646cff;
+		border: 3px solid #646cff;
+		color: #FFFFFF;
+	}
+}
+
+.gameForm {
+	margin-top: 15px;
 }

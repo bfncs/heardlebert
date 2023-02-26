@@ -9,11 +9,10 @@
 
 
 :root {
-	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+	font-family: Source Sans Pro, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 	line-height: 1.5;
 	font-weight: 400;
-
-	color: #213547;
+	color: black;
 	background-color: #fff;
 
 	font-synthesis: none;
@@ -32,63 +31,17 @@ html {
 	box-sizing: inherit;
 }
 
-#levelFieldSet {
-	border: none;
-	padding: 0;
-	margin-bottom: 50px;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	justify-content: flex-start;
-	gap: 5px;
-}
-
-.radio {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	gap: 5px;
-}
-
-a {
-	font-weight: 500;
-	color: #646cff;
-	text-decoration: inherit;
-}
-a:hover {
-	color: #747bff;
-}
-
 body {
 	margin: 0;
 	display: flex;
-	place-items: center;
 	min-width: 320px;
 	min-height: 100vh;
 }
 
 h1 {
-	font-size: 3.2em;
+	font-size: 32px;
 	line-height: 1.1;
-}
-
-button {
-	border-radius: 8px;
-	border: 1px solid transparent;
-	padding: 0.6em 1.2em;
-	font-size: 1em;
-	font-weight: 500;
-	font-family: inherit;
-	background-color: colors.$primary;
-	color: #FFF;
-	cursor: pointer;
-	transition: border-color 0.25s;
-
-	&:hover {
-		background-color: darken(colors.$primary, 5%);
-	}
-
+	color: #A1A1A1;
 }
 
 #root {

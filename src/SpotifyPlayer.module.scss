@@ -1,0 +1,60 @@
+.buttonAndContainerDescription {
+	padding: 1em 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+}
+
+.progress {
+	padding: 0 0.5em;
+}
+
+.player {
+	opacity: 0;
+	height: 1px;
+	width: 1px;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
+}
+
+.spinner {
+	display: inline-block;
+	margin: 0 0.5em;
+}
+
+.playContainer {
+	width: 100%;
+	height: 24px;
+	border: 3px solid #E6E6E6;
+	border-radius: 8px;
+}
+
+.playButton {
+	padding: 0;
+	border: none;
+	cursor: pointer;
+
+	background-color: transparent;
+	background-position: center;
+	background-repeat: no-repeat;
+
+	transition-duration: 0.15s;
+	transition-property: background-image;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+
+	width: 48px;
+	height: 48px;
+	background-image: url('assets/icon-play_button_circle-dark-line-default-24.svg');
+	&:hover {
+		 background-image: url('assets/icon-play_button_circle-blue-line-default-24.svg');
+	 }
+}
+
+.times {
+	font-size: 16px;
+	font-weight: 700;
+	color: #000000;
+}
