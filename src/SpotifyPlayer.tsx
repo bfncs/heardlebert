@@ -95,18 +95,14 @@ function SpotifyPlayer(props: Props) {
 			<div className={classes.buttonAndContainerDescription}>
 				<span className={classes.times}>1.5s</span>
 
-				{state.isLoading ? (
-					<Spinner size={12} className={classes.spinner} />
-				) : (
-					<button
-						className={classes.playButton}
-						onClick={() => {
-							embedControllerRef.current?.play();
-							setState({ ...state, isLoading: true });
-						}}
-						disabled={state.isLoading || state.isPlaying}
-					/>
-				)}
+				<button
+					className={classes.playButton}
+					onClick={() => {
+						embedControllerRef.current?.play();
+						setState({ ...state, isLoading: true });
+					}}
+					disabled={state.isLoading || state.isPlaying}
+				/>
 
 				<span className={classes.times}>15s</span>
 
