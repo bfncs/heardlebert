@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import classes from "./SpotifyPlayer.module.scss";
-import { Icon, Spinner } from "@blueprintjs/core";
+import { Spinner } from "@blueprintjs/core";
+import classNames from "classnames";
 
 interface Props {
 	spotifyIframeApi: IframeApi;
 	uri: string;
 	stopAfterMs: number;
+	playerSpans: boolean[];
 }
 
 function SpotifyPlayer(props: Props) {
@@ -73,7 +75,23 @@ function SpotifyPlayer(props: Props) {
 
 	return (
 		<div className={classes.wrapper}>
-			<div className={classes.playContainer}></div>
+			<div className={classes.playContainer}>
+				{props.playerSpans.map((span, index) => (
+					<>
+						<span
+							key={index}
+							className={classNames(classes.playingSpan, {
+								[classes.playingFilled]: span,
+								[classes.notLastPlaying]: index !== 9,
+							})}
+						></span>
+						<span
+							key={"border-" + index}
+							className={classNames({ [classes.notLastBorder]: index !== 9 })}
+						></span>
+					</>
+				))}
+			</div>
 			<div className={classes.buttonAndContainerDescription}>
 				<span className={classes.times}>1.5s</span>
 

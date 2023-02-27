@@ -210,6 +210,11 @@ function Game(props: Props) {
 		);
 	}
 
+	const playerSpans: boolean[] = [];
+	for (let i = 0; i < 10; i++) {
+		playerSpans.push(state.guesses.length >= i);
+	}
+
 	return (
 		<div className={classes.game}>
 			{!hasBeenSuccessfullyGuessed ? (
@@ -230,8 +235,9 @@ function Game(props: Props) {
 			{state.solution != null && !hasBeenSuccessfullyGuessed ? (
 				<div className={classes.lastSolution}>
 					<p>
-						The solution of the last Track was {state.solution.title} by{" "}
-						{state.solution.artists.join(" & ")}
+						The solution of the last Track was <b>{state.solution.title}</b> by
+						&nbsp;
+						<b>{state.solution.artists.join(" & ")}</b>
 					</p>
 				</div>
 			) : null}
@@ -240,6 +246,7 @@ function Game(props: Props) {
 				spotifyIframeApi={props.spotifyIframeApi}
 				uri={currentTrack.uri}
 				stopAfterMs={playSongLength}
+				playerSpans={playerSpans}
 			/>
 
 			{state.guesses.length < 10 ? (
