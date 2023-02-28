@@ -90,7 +90,7 @@ function Game(props: Props) {
 	const playSongLength = 1500 + state.guesses.length * 1500;
 	const hasBeenSuccessfullyGuessed =
 		state.guesses.length > 0 &&
-		state.guesses.length < 10 &&
+		state.guesses.length <= 10 &&
 		isCorrectAnswer(
 			state.guesses[state.guesses.length - 1],
 			currentTrack,
