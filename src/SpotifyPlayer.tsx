@@ -141,7 +141,9 @@ function SpotifyPlayer(props: Props) {
 					disabled={state.isLoading || state.isPlaying}
 				/>
 
-				<span className={classes.times}>15s</span>
+				<span className={`${classes.times} ${classes.right}`}>
+					{(maxPlayLength / 1000).toFixed(0)}s
+				</span>
 
 				<div className={classes.player}>
 					<div ref={player} />

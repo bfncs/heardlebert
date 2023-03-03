@@ -79,7 +79,11 @@
 }
 
 .times {
+	min-width: 40px;
 	font-size: 16px;
 	font-weight: 700;
 	color: #000000;
+	&.right {
+		text-align: right;
+	}
 }
