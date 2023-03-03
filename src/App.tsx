@@ -39,7 +39,7 @@ function App(props: Props) {
 	const [state, setState] = useState<AppState>(initialState);
 	const [playlist, setPlaylist] = useState<Playlist | null>(null);
 	useEffect(() => {
-		const playlistId = getPlaylistIdFromUrl() || "37i9dQZF1DWXRqgorJj26U";
+		const playlistId = getPlaylistIdFromUrl() || "37i9dQZF1DX4o1oenSJRJd";
 		(async () => {
 			const playlist = await fetchPlaylist(playlistId);
 			console.debug("Fetched playlist", playlist);
