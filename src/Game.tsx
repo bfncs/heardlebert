@@ -91,7 +91,7 @@ function Game(props: Props) {
 	);
 
 	const currentTrack: Track = props.tracks[state.track];
-	const playSongLength = GUESSABLE_TRACK_LENGTHS[state.guesses.length];
+	let playSongLength = GUESSABLE_TRACK_LENGTHS[state.guesses.length];
 	const hasBeenSuccessfullyGuessed =
 		state.guesses.length > 0 &&
 		state.guesses.length <= GUESSABLE_TRACK_LENGTHS.length &&
@@ -242,6 +242,10 @@ function Game(props: Props) {
 		return hasBeenSuccessfullyGuessed
 			? getSuccessfullyGuessed()
 			: getFormIfNotRightGuessed();
+	}
+
+	if (hasBeenSuccessfullyGuessed) {
+		playSongLength = GUESSABLE_TRACK_LENGTHS[5];
 	}
 
 	return (
