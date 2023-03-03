@@ -13,10 +13,26 @@
 	margin-top: 10px;
 }
 
-.messageSuccess {
-	font-size: 2em;
-	padding: 2em 0;
+.successDiv {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 25px;
+
+	.messageSuccess {
+		font-size: 2em;
+		padding: 2em 0;
+	}
+
+	.smiley {
+		width: 110px;
+		height: 110px;
+		font-size: 110px;
+	}
 }
+
+
 
 .formRow {
 	display: flex;
@@ -124,3 +140,5 @@
 .gameForm {
 	margin-top: 15px;
 }
+
+

@@ -19,8 +19,8 @@
 .progressWrapper {
 	position: relative;
 	width: 100%;
-	height: 1em;
-	border: 1px solid #1700a8;
+	height: 2em;
+	border: 2px solid #1700a8;
 	border-radius: 4px;
 }
 
@@ -47,8 +47,8 @@
 .progressTick {
 	position: absolute;
 	top: 0;
-	width: 1px;
-	background: #646cff;
+	width: 2px;
+	background: #1700a8;
 	height: 100%;
 }
 
@@ -70,12 +70,12 @@
 	transition-duration: 0.15s;
 	transition-property: background-image;
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+	background-image: url('assets/icon-play_button_circle-blue-line-default-24.svg');
 
 	width: 48px;
 	height: 48px;
-	background-image: url('assets/icon-play_button_circle-dark-line-default-24.svg');
 	&:hover {
-		 background-image: url('assets/icon-play_button_circle-blue-line-default-24.svg');
+		background-image: url('assets/icon-play_button_circle-dark-line-default-24.svg');
 	 }
 }
 

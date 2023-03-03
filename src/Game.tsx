@@ -126,30 +126,36 @@ function Game(props: Props) {
 
 	function getEverythingRightText() {
 		return (
-			"🎉🎉🎉🎉🎉 You have guessed the Title „" +
+			"You did it! You have guessed the Title „" +
 			currentTrack.title +
-			"“ and the artist " +
+			"“ and the artist „" +
 			currentTrack.artists.join(" & ") +
-			" right. 🎉🎉🎉🎉🎉"
+			"“ right."
 		);
 	}
 
 	function getJustArtistRightText() {
 		return (
-			"🎉 You have guessed the artist " +
+			"You did it! You have guessed the artist „" +
 			currentTrack.artists.join(" & ") +
-			" right, but the title was „" +
+			"“ right, but the title was „" +
 			currentTrack.title +
-			"“. 🎉"
+			"“."
 		);
 	}
 
 	function getSuccessfullyGuessed() {
 		return (
-			<div className={classes.messageSuccess}>
-				{isTitleMatching(state.guesses[state.guesses.length - 1], currentTrack)
-					? getEverythingRightText()
-					: getJustArtistRightText()}
+			<div className={classes.successDiv}>
+				<span className={classes.smiley}>🥳</span>
+				<div className={classes.messageSuccess}>
+					{isTitleMatching(
+						state.guesses[state.guesses.length - 1],
+						currentTrack
+					)
+						? getEverythingRightText()
+						: getJustArtistRightText()}
+				</div>
 				<button className={classes.nextTrack} onClick={goToNextSong}>
 					{"Get a new Song"}
 				</button>
