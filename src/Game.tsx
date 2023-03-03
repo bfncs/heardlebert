@@ -1,8 +1,10 @@
 import SpotifyPlayer from "./SpotifyPlayer";
-import { useEffect, useMemo, useState } from "react";
+import React, { SyntheticEvent, useEffect, useMemo, useState } from "react";
 import { Track } from "./tracks";
 import classes from "./Game.module.scss";
 import { Spinner } from "@blueprintjs/core";
+import { Simulate } from "react-dom/test-utils";
+import input = Simulate.input;
 
 interface Props {
 	spotifyIframeApi: IframeApi;
@@ -74,6 +76,8 @@ function deleteDuplicates(tracks: Track[]) {
 	return result;
 }
 
+const GUESSABLE_TRACK_LENGTHS = [1000, 2000, 4000, 7000, 11000, 16000];
+
 function Game(props: Props) {
 	const [state, setState] = useState<GameState>(initialState);
 	useEffect(() => {
@@ -87,10 +91,10 @@ function Game(props: Props) {
 	);
 
 	const currentTrack: Track = props.tracks[state.track];
-	const playSongLength = 1500 + state.guesses.length * 1500;
+	const playSongLength = GUESSABLE_TRACK_LENGTHS[state.guesses.length];
 	const hasBeenSuccessfullyGuessed =
 		state.guesses.length > 0 &&
-		state.guesses.length <= 10 &&
+		state.guesses.length <= GUESSABLE_TRACK_LENGTHS.length &&
 		isCorrectAnswer(
 			state.guesses[state.guesses.length - 1],
 			currentTrack,
@@ -105,16 +109,18 @@ function Game(props: Props) {
 		);
 	}
 
-	function tryGuess(
-		event:
-			| React.FormEvent<HTMLFormElement>
-			| React.MouseEvent<HTMLButtonElement>
-	) {
+	function tryGuess(event: SyntheticEvent) {
 		setState({
 			...state,
 			guesses: [...state.guesses, inputValue],
 		});
 		setInputValue("");
+		if (
+			state.guesses.length >= GUESSABLE_TRACK_LENGTHS.length - 1 &&
+			!isCorrectAnswer(inputValue, props.tracks[state.track], props.level)
+		) {
+			goToNextSong();
+		}
 		event.preventDefault();
 	}
 
@@ -144,11 +150,27 @@ function Game(props: Props) {
 				{isTitleMatching(state.guesses[state.guesses.length - 1], currentTrack)
 					? getEverythingRightText()
 					: getJustArtistRightText()}
+				<button className={classes.nextTrack} onClick={goToNextSong}>
+					{"Get a new Song"}
+				</button>
 			</div>
 		);
 	}
 
+	function goToNextSong() {
+		setState({
+			...initialState,
+			track: state.track + 1 >= props.tracks.length ? 0 : state.track + 1,
+			solution: {
+				title: currentTrack.title,
+				artists: currentTrack.artists,
+			},
+		});
+	}
+
 	function getFormIfNotRightGuessed() {
+		const isSkippingAllowed =
+			state.guesses.length < GUESSABLE_TRACK_LENGTHS.length - 1;
 		return (
 			<form
 				onSubmit={(event) => {
@@ -166,7 +188,7 @@ function Game(props: Props) {
 					/>
 					<datalist id="tracks">
 						{sortedTracks.map((track) => (
-							<option>
+							<option key={track.uri}>
 								{track.artists[0]} – {track.title}
 							</option>
 						))}
@@ -177,13 +199,23 @@ function Game(props: Props) {
 						className={classes.hearMore}
 						type="button"
 						onClick={() => {
-							setState({
-								...state,
-								guesses: [...state.guesses, "skipped"],
-							});
+							if (isSkippingAllowed) {
+								setState({
+									...state,
+									guesses: [...state.guesses, "skipped"],
+								});
+							} else {
+								goToNextSong();
+							}
 						}}
 					>
-						Skip (+ 1.5)
+						{isSkippingAllowed
+							? `Skip (+${
+									(GUESSABLE_TRACK_LENGTHS[state.guesses.length + 1] -
+										GUESSABLE_TRACK_LENGTHS[state.guesses.length]) /
+									1000
+							  }s)`
+							: "Next track"}
 					</button>
 
 					<button
@@ -201,18 +233,9 @@ function Game(props: Props) {
 	}
 
 	function getSolutionIfGuessedOrForm() {
-		return (
-			<>
-				{hasBeenSuccessfullyGuessed
-					? getSuccessfullyGuessed()
-					: getFormIfNotRightGuessed()}
-			</>
-		);
-	}
-
-	const playerSpans: boolean[] = [];
-	for (let i = 0; i < 10; i++) {
-		playerSpans.push(state.guesses.length >= i);
+		return hasBeenSuccessfullyGuessed
+			? getSuccessfullyGuessed()
+			: getFormIfNotRightGuessed();
 	}
 
 	return (
@@ -220,7 +243,11 @@ function Game(props: Props) {
 			{!hasBeenSuccessfullyGuessed ? (
 				<>
 					<span>
-						You have <b>{10 - state.guesses.length} guesses left</b>
+						You have{" "}
+						<b>
+							{GUESSABLE_TRACK_LENGTHS.length - state.guesses.length} guesses
+							left
+						</b>
 					</span>
 					<ol className={classes.guessList}>
 						{state.guesses.map((guess, index) => (
@@ -246,28 +273,12 @@ function Game(props: Props) {
 				spotifyIframeApi={props.spotifyIframeApi}
 				uri={currentTrack.uri}
 				stopAfterMs={playSongLength}
-				playerSpans={playerSpans}
+				progressBarTicksMs={GUESSABLE_TRACK_LENGTHS}
 			/>
 
-			{state.guesses.length < 10 ? (
+			{state.guesses.length <= GUESSABLE_TRACK_LENGTHS.length ? (
 				<div className={classes.gameForm}>{getSolutionIfGuessedOrForm()}</div>
 			) : null}
-
-			<button
-				className={classes.nextTrack}
-				onClick={() => {
-					setState({
-						...initialState,
-						track: state.track + 1 >= props.tracks.length ? 0 : state.track + 1,
-						solution: {
-							title: currentTrack.title,
-							artists: currentTrack.artists,
-						},
-					});
-				}}
-			>
-				{hasBeenSuccessfullyGuessed ? "Get a new Song" : "Skip to next track"}
-			</button>
 		</div>
 	);
 }

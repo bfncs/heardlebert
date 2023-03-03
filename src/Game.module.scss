@@ -49,9 +49,16 @@
 
 		&:hover {
 			background: #646cff;
-			border: 3px solid #646cff;
+			border-color: #646cff;
 			color: #FFFFFF;
 		}
+
+		&:disabled {
+			color: #000000;
+			background: lightgrey;
+			border-color: darkgrey;
+			cursor: not-allowed;
+	}
 
 	}
 
@@ -94,6 +101,7 @@
 }
 
 .nextTrack {
+	display: block;
 	margin-top: 10px;
 	background: #FFFFFF;
 	border: 3px solid #000000;
