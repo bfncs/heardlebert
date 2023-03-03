@@ -9,7 +9,7 @@ import input = Simulate.input;
 interface Props {
 	spotifyIframeApi: IframeApi;
 	tracks: Track[];
-	level: "easy" | "hard";
+	level: "easy" | "medium" | "hard";
 }
 
 interface track {
@@ -42,9 +42,9 @@ function isTitleMatching(inputValue: string, currentTrack: Track) {
 function isCorrectAnswer(
 	inputValue: string,
 	currentTrack: Track,
-	level: "easy" | "hard" = "easy"
+	level: "easy" | "medium" | "hard" = "easy"
 ) {
-	if (level === "hard") {
+	if (level === "medium" || level === "hard") {
 		return (
 			isAnyArtistMatching(currentTrack, inputValue) &&
 			isTitleMatching(inputValue, currentTrack)
@@ -76,7 +76,9 @@ function deleteDuplicates(tracks: Track[]) {
 	return result;
 }
 
-const GUESSABLE_TRACK_LENGTHS = [1000, 2000, 4000, 7000, 11000, 16000];
+const GUESSABLE_TRACK_LENGTHS_EASY = [3000, 4000, 6000, 9000, 13000, 18000];
+const GUESSABLE_TRACK_LENGTHS_MEDIUM = [1500, 2500, 4500, 7500, 11500, 16500];
+const GUESSABLE_TRACK_LENGTHS_HARD = [1000, 2000, 4000, 7000, 11000, 16000];
 
 function Game(props: Props) {
 	const [state, setState] = useState<GameState>(initialState);
@@ -91,6 +93,13 @@ function Game(props: Props) {
 	);
 
 	const currentTrack: Track = props.tracks[state.track];
+	let GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_EASY;
+	if (props.level === "medium") {
+		GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_MEDIUM;
+	} else if (props.level === "hard") {
+		GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_HARD;
+	}
+
 	let playSongLength = GUESSABLE_TRACK_LENGTHS[state.guesses.length];
 	const hasBeenSuccessfullyGuessed =
 		state.guesses.length > 0 &&

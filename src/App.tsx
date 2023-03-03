@@ -15,7 +15,7 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 type AppState = {
-	level: "easy" | "hard";
+	level: "easy" | "medium" | "hard";
 };
 const initialState: AppState = {
 	level: "easy",
@@ -62,11 +62,12 @@ function App(props: Props) {
 					onChange={(event) => {
 						setState({
 							...state,
-							level: event.target.value as "easy" | "hard",
+							level: event.target.value as "easy" | "medium" | "hard",
 						});
 					}}
 				>
 					<option value="easy">Easy</option>
+					<option value="medium">Medium</option>
 					<option value="hard">Hard</option>
 				</select>{" "}
 				difficulty.
