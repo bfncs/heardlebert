@@ -138,9 +138,19 @@ function SpotifyPlayer(props: Props) {
 						embedControllerRef.current?.play();
 						setState({ ...state, isLoading: true });
 					}}
-					disabled={state.isLoading || state.isPlaying}
+					disabled={state.isLoading}
+					hidden={state.isPlaying}
 				/>
 
+				<button
+					className={classes.pauseButton}
+					onClick={() => {
+						embedControllerRef.current?.pause();
+						setState({ ...state, isLoading: false });
+					}}
+					disabled={state.isLoading}
+					hidden={!state.isPlaying}
+				/>
 				<span className={`${classes.times} ${classes.right}`}>
 					{(maxPlayLength / 1000).toFixed(0)}s
 				</span>

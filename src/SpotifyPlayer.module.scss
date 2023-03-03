@@ -79,6 +79,29 @@
 	 }
 }
 
+.pauseButton {
+	padding: 0;
+	border: none;
+	cursor: pointer;
+
+	background-color: transparent;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+
+	transition-duration: 0.15s;
+	transition-property: background-image;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+	background-image: url('assets/icon-pause_button_circle-blue-line-default-24.svg');
+
+	width: 48px;
+	height: 48px;
+	&:hover {
+		background-image: url('assets/icon-pause_button_circle-dark-line-default-24.svg');
+
+	}
+}
+
 .times {
 	min-width: 40px;
 	font-size: 16px;
