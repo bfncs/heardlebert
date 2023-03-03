@@ -37,9 +37,9 @@
 
 	.hearMore {
 		background: #FFFFFF;
-		border: 3px solid #000000;
+		border: 3px solid #6951FF;
 		border-radius: 8px;
-		color: #000000;
+		color: #6951FF;
 		height: 48px;
 		width: 155px;
 		font-size: 24px;
@@ -48,8 +48,8 @@
 		cursor: pointer;
 
 		&:hover {
-			background: #646cff;
-			border-color: #646cff;
+			background: #1700a8;
+			border-color: #1700a8;
 			color: #FFFFFF;
 		}
 
@@ -63,8 +63,8 @@
 	}
 
 	.submit {
-		background: #000000;
-		border: 3px solid #000000;
+		background: #6951FF;
+		border: 3px solid #6951FF;
 		border-radius: 8px;
 		color: #FFFFFF;
 		height: 48px;
@@ -74,8 +74,8 @@
 		cursor: pointer;
 
 		&:hover {
-			background: #646cff;
-			border: 3px solid #646cff;
+			background: #1700a8;
+			border: 3px solid #1700a8;
 		}
 
 	}
@@ -104,9 +104,9 @@
 	display: block;
 	margin-top: 10px;
 	background: #FFFFFF;
-	border: 3px solid #000000;
+	border: 3px solid #6951FF;
 	border-radius: 8px;
-	color: #000000;
+	color: #6951FF;
 	height: 48px;
 	width: auto;
 	font-size: 24px;
@@ -115,8 +115,8 @@
 	align-self: center;
 
 	&:hover {
-		background: #646cff;
-		border: 3px solid #646cff;
+		background: #1700a8;
+		border: 3px solid #1700a8;
 		color: #FFFFFF;
 	}
 }

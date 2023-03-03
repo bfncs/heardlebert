@@ -7,7 +7,12 @@
   h1 {
     font-size: 32px;
     line-height: 1.1;
-    color: #A1A1A1;
+    font-weight: normal;
+    background: linear-gradient(90deg, rgba(105, 81, 255, 0.5) 0%, rgba(0, 133, 255, 0.5) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
     text-align: center;
     margin-bottom: 29px;
   }
@@ -20,4 +25,12 @@
     margin-top: 0;
     margin-bottom: 48px;
   }
+}
+
+
+select {
+    border: none;
+    font-weight: bold;
+    text-decoration: underline;
+    color: #6951FF;
 }

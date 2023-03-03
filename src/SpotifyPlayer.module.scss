@@ -20,7 +20,8 @@
 	position: relative;
 	width: 100%;
 	height: 1em;
-	border: 1px solid lightgrey;
+	border: 1px solid #1700a8;
+	border-radius: 4px;
 }
 
 .stopAfterBar,
@@ -35,19 +36,19 @@
 }
 
 .stopAfterBar {
-	background: lightgrey;
+	background: #646cff;
 }
 
 .progressBar {
 	z-index: 1;
-	background: #646cff;
+	background: #1700a8 ;
 }
 
 .progressTick {
 	position: absolute;
 	top: 0;
 	width: 1px;
-	background: darkgrey;
+	background: #646cff;
 	height: 100%;
 }
 

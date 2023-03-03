@@ -49,7 +49,9 @@ function App(props: Props) {
 	return (
 		<div>
 			<div className={classes.headlines}>
-				<h1>Heardlebert</h1>
+				<h1>
+					<b>The secret </b> (and illegal) <b>Heardlebert</b>
+				</h1>
 				<h2>Guess this song</h2>
 			</div>
 			<span>
