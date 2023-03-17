@@ -90,7 +90,10 @@ function deleteDuplicates(tracks: Track[]) {
 function deleteAlbumDuplicates(tracks: Track[]): Track[] {
 	const result: Track[] = [];
 	for (let i = 0; i < tracks.length; i++) {
-		if (i === 0 || tracks[i].album !== tracks[i - 1].album) {
+		if (
+			i === 0 ||
+			result.filter((t) => t.album === tracks[i].album).length === 0
+		) {
 			result.push(tracks[i]);
 		}
 	}
