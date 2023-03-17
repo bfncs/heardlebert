@@ -53,6 +53,9 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 					}[];
 					name: string;
 					uri: string;
+					album: {
+						name: string;
+					};
 				};
 			}[];
 			next: string;
@@ -67,6 +70,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 			artists: item.track.artists.map((artist) => artist.name),
 			title: item.track.name,
 			uri: item.track.uri,
+			album: item.track.album.name,
 		})),
 	};
 
@@ -79,6 +83,9 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 					}[];
 					name: string;
 					uri: string;
+					album: {
+						name: string;
+					};
 				};
 			}[];
 			next: string;
@@ -103,6 +110,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 					artists: item.track.artists.map((artist) => artist.name),
 					title: item.track.name,
 					uri: item.track.uri,
+					album: item.track.album.name,
 				}))
 			);
 		}

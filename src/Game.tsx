@@ -10,11 +10,13 @@ interface Props {
 	spotifyIframeApi: IframeApi;
 	tracks: Track[];
 	level: "easy" | "medium" | "hard";
+	gameMode: "title" | "artist" | "both" | "album";
 }
 
 interface track {
 	title: string;
 	artists: string[];
+	album: string;
 }
 
 type GameState = {
@@ -39,18 +41,27 @@ function isTitleMatching(inputValue: string, currentTrack: Track) {
 	return inputValue.toLowerCase().includes(currentTrack.title.toLowerCase());
 }
 
+function isAlbumMatching(inputValue: string, currentTrack: Track) {
+	return inputValue.toLowerCase().includes(currentTrack.album.toLowerCase());
+}
+
 function isCorrectAnswer(
 	inputValue: string,
 	currentTrack: Track,
-	level: "easy" | "medium" | "hard" = "easy"
+	gamemode: "title" | "artist" | "both" | "album" = "both"
 ) {
-	if (level === "medium" || level === "hard") {
-		return (
-			isAnyArtistMatching(currentTrack, inputValue) &&
-			isTitleMatching(inputValue, currentTrack)
-		);
-	} else {
-		return isAnyArtistMatching(currentTrack, inputValue);
+	switch (gamemode) {
+		case "title":
+			return isTitleMatching(inputValue, currentTrack);
+		case "artist":
+			return isAnyArtistMatching(currentTrack, inputValue);
+		case "both":
+			return (
+				isTitleMatching(inputValue, currentTrack) &&
+				isAnyArtistMatching(currentTrack, inputValue)
+			);
+		case "album":
+			return isAlbumMatching(inputValue, currentTrack);
 	}
 }
 
@@ -71,6 +82,16 @@ function deleteDuplicates(tracks: Track[]) {
 			sortedTracks[i].title !== sortedTracks[i - 1].title
 		) {
 			result.push(sortedTracks[i]);
+		}
+	}
+	return result;
+}
+
+function deleteAlbumDuplicates(tracks: Track[]): Track[] {
+	const result: Track[] = [];
+	for (let i = 0; i < tracks.length; i++) {
+		if (i === 0 || tracks[i].album !== tracks[i - 1].album) {
+			result.push(tracks[i]);
 		}
 	}
 	return result;
@@ -107,7 +128,7 @@ function Game(props: Props) {
 		isCorrectAnswer(
 			state.guesses[state.guesses.length - 1],
 			currentTrack,
-			props.level
+			props.gameMode
 		);
 
 	if (props.tracks.length === 0) {
@@ -126,11 +147,64 @@ function Game(props: Props) {
 		setInputValue("");
 		if (
 			state.guesses.length >= GUESSABLE_TRACK_LENGTHS.length - 1 &&
-			!isCorrectAnswer(inputValue, props.tracks[state.track], props.level)
+			!isCorrectAnswer(inputValue, props.tracks[state.track], props.gameMode)
 		) {
 			goToNextSong();
 		}
 		event.preventDefault();
+	}
+
+	function getDatalist(sortedTracks: Track[]) {
+		switch (props.gameMode) {
+			case "title":
+				return (
+					<>
+						{sortedTracks.map((track) => (
+							<option key={track.uri}>
+								`{track.title}` from {track.artists.join(", ")}
+							</option>
+						))}
+					</>
+				);
+			case "artist":
+				return (
+					<>
+						{sortedTracks.map((track) => (
+							<option key={track.uri}>`{track.artists.join(", ")}`</option>
+						))}
+					</>
+				);
+			case "both":
+				return (
+					<>
+						{sortedTracks.map((track) => (
+							<option key={track.uri}>
+								`{track.title}` - `{track.artists[0]}`
+							</option>
+						))}
+					</>
+				);
+			case "album":
+				return (
+					<>
+						{deleteAlbumDuplicates(sortedTracks).map((track) => (
+							<option key={track.uri}>
+								`{track.album}` from `{track.artists.join(", ")}`
+							</option>
+						))}
+					</>
+				);
+		}
+
+		return (
+			<>
+				{sortedTracks.map((track) => (
+					<option key={track.uri}>
+						{track.artists[0]} – {track.title}
+					</option>
+				))}
+			</>
+		);
 	}
 
 	function getEverythingRightText() {
@@ -153,18 +227,32 @@ function Game(props: Props) {
 		);
 	}
 
-	function getSuccessfullyGuessed() {
-		return (
-			<div className={classes.successDiv}>
-				<span className={classes.smiley}>🥳</span>
-				<div className={classes.messageSuccess}>
+	function getSuccessfullyText() {
+		if (props.gameMode === "album") {
+			return (
+				"You did it! You have guessed the album „" +
+				currentTrack.album +
+				"“ right."
+			);
+		} else {
+			return (
+				<>
 					{isTitleMatching(
 						state.guesses[state.guesses.length - 1],
 						currentTrack
 					)
 						? getEverythingRightText()
 						: getJustArtistRightText()}
-				</div>
+				</>
+			);
+		}
+	}
+
+	function getSuccessfullyGuessed() {
+		return (
+			<div className={classes.successDiv}>
+				<span className={classes.smiley}>🥳</span>
+				<div className={classes.messageSuccess}>{getSuccessfullyText()}</div>
 				<button className={classes.nextTrack} onClick={goToNextSong}>
 					{"Get a new Song"}
 				</button>
@@ -179,8 +267,22 @@ function Game(props: Props) {
 			solution: {
 				title: currentTrack.title,
 				artists: currentTrack.artists,
+				album: currentTrack.album,
 			},
 		});
+	}
+
+	function getPlaceholderForInput() {
+		switch (props.gameMode) {
+			case "title":
+				return "search for song title";
+			case "artist":
+				return "search for artist";
+			case "both":
+				return "search for artist / song title";
+			case "album":
+				return "search for album";
+		}
 	}
 
 	function getFormIfNotRightGuessed() {
@@ -195,19 +297,13 @@ function Game(props: Props) {
 				<div className={classes.formRow}>
 					<input
 						className={classes.input}
-						placeholder={"search for artist / song title"}
+						placeholder={getPlaceholderForInput()}
 						type="text"
 						value={inputValue}
 						onChange={(event) => setInputValue(event.target.value)}
 						list="tracks"
 					/>
-					<datalist id="tracks">
-						{sortedTracks.map((track) => (
-							<option key={track.uri}>
-								{track.artists[0]} – {track.title}
-							</option>
-						))}
-					</datalist>
+					<datalist id="tracks">{getDatalist(sortedTracks)}</datalist>
 				</div>
 				<div className={classes.formButtons}>
 					<button
@@ -257,6 +353,48 @@ function Game(props: Props) {
 		playSongLength = GUESSABLE_TRACK_LENGTHS[5];
 	}
 
+	function getSolutionIfNotRightGuessed() {
+		switch (props.gameMode) {
+			case "album":
+				return (
+					<div className={classes.lastSolution}>
+						<p>
+							The Album of the last Track was <b>{state.solution!.album}</b>{" "}
+							from <b>{state.solution!.artists.join(" & ")}</b> and the Title
+							was <b>{state.solution!.title}</b>
+						</p>
+					</div>
+				);
+			case "artist":
+				return (
+					<div className={classes.lastSolution}>
+						<p>
+							The Artist of the last Track was{" "}
+							<b>{state.solution!.artists.join(" & ")}</b>
+						</p>
+					</div>
+				);
+			case "title":
+				return (
+					<div className={classes.lastSolution}>
+						<p>
+							The Title of the last Track was <b>{state.solution!.title}</b>
+						</p>
+					</div>
+				);
+
+			case "both":
+				return (
+					<div className={classes.lastSolution}>
+						<p>
+							The Title of the last Track was <b>{state.solution!.title}</b> and
+							the Artist was <b>{state.solution!.artists.join(" & ")}</b>
+						</p>
+					</div>
+				);
+		}
+	}
+
 	return (
 		<div className={classes.game}>
 			{!hasBeenSuccessfullyGuessed ? (
@@ -278,15 +416,9 @@ function Game(props: Props) {
 				</>
 			) : null}
 
-			{state.solution != null && !hasBeenSuccessfullyGuessed ? (
-				<div className={classes.lastSolution}>
-					<p>
-						The solution of the last Track was <b>{state.solution.title}</b> by
-						&nbsp;
-						<b>{state.solution.artists.join(" & ")}</b>
-					</p>
-				</div>
-			) : null}
+			{state.solution != null && !hasBeenSuccessfullyGuessed
+				? getSolutionIfNotRightGuessed()
+				: null}
 
 			<SpotifyPlayer
 				spotifyIframeApi={props.spotifyIframeApi}

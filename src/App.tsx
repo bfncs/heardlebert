@@ -16,9 +16,11 @@ function shuffle<T>(arr: T[]): T[] {
 
 type AppState = {
 	level: "easy" | "medium" | "hard";
+	gameMode: "title" | "artist" | "both" | "album";
 };
 const initialState: AppState = {
 	level: "easy",
+	gameMode: "both",
 };
 
 interface Props {
@@ -56,7 +58,26 @@ function App(props: Props) {
 			</div>
 			<span>
 				The songs are chosen from the playlist <b>{playlist?.name}</b> <br />
-				and you play on &nbsp;
+				and you play gamemode &nbsp;
+				<select
+					value={state.gameMode}
+					onChange={(event) => {
+						setState({
+							...state,
+							gameMode: event.target.value as
+								| "title"
+								| "album"
+								| "both"
+								| "artist",
+						});
+					}}
+				>
+					<option value="title">Title</option>
+					<option value="album">Album</option>
+					<option value="both">Title & Artist</option>
+					<option value="artist">Artist</option>
+				</select>{" "}
+				on &nbsp;
 				<select
 					value={state.level}
 					onChange={(event) => {
@@ -77,6 +98,7 @@ function App(props: Props) {
 				spotifyIframeApi={props.spotifyIframeApi}
 				tracks={playlist?.tracks || []}
 				level={state.level}
+				gameMode={state.gameMode}
 			/>
 		</div>
 	);
