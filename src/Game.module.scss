@@ -7,6 +7,10 @@
 	border-radius: 8px;
 	height:48px;
 	padding: 9px 32px;
+
+	@media (max-width: 400px) {
+		font-size: 16px;
+	}
 }
 
 .game {
@@ -51,17 +55,23 @@
 	gap: 25px;
 
 
+	button {
+		font-size: 24px;
+		font-weight: 600;
+		cursor: pointer;
+		border-radius: 8px;
+		height: 48px;
+		width: 155px;
+
+		@media (max-width: 400px) {
+			font-size: 16px;
+		}
+	}
+
 	.hearMore {
 		background: #FFFFFF;
 		border: 3px solid #6951FF;
-		border-radius: 8px;
 		color: #6951FF;
-		height: 48px;
-		width: 155px;
-		font-size: 24px;
-		font-weight: 600;
-
-		cursor: pointer;
 
 		&:hover {
 			background: #1700a8;
@@ -81,13 +91,7 @@
 	.submit {
 		background: #6951FF;
 		border: 3px solid #6951FF;
-		border-radius: 8px;
 		color: #FFFFFF;
-		height: 48px;
-		width: 155px;
-		font-size: 24px;
-		font-weight: 600;
-		cursor: pointer;
 
 		&:hover {
 			background: #1700a8;
@@ -108,9 +112,14 @@
 	border: 3px solid #E6E6E6;
 	border-radius: 8px;
 	list-style-type: none;
+	font-size: 24px;
+
+
+	@media (max-width: 400px) {
+		font-size: 16px;
+	}
 
 	.guessListItem {
-		font-size: 24px;
 		font-weight: 400;
 		color: #000000;
 	}
@@ -129,7 +138,9 @@
 	font-weight: 600;
 	cursor: pointer;
 	align-self: center;
-
+	@media (max-width: 400px) {
+		font-size: 16px;
+	}
 	&:hover {
 		background: #1700a8;
 		border: 3px solid #1700a8;
