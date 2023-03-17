@@ -100,6 +100,20 @@ function deleteAlbumDuplicates(tracks: Track[]): Track[] {
 	return result;
 }
 
+function deleteArtistDuplicates(tracks: Track[]): Track[] {
+	const result: Track[] = [];
+	for (let i = 0; i < tracks.length; i++) {
+		if (
+			i === 0 ||
+			result.filter((t) => t.artists.join(",") === tracks[i].artists.join(","))
+				.length === 0
+		) {
+			result.push(tracks[i]);
+		}
+	}
+	return result;
+}
+
 const GUESSABLE_TRACK_LENGTHS_EASY = [3000, 4000, 6000, 9000, 13000, 18000];
 const GUESSABLE_TRACK_LENGTHS_MEDIUM = [1500, 2500, 4500, 7500, 11500, 16500];
 const GUESSABLE_TRACK_LENGTHS_HARD = [1000, 2000, 4000, 7000, 11000, 16000];
@@ -164,7 +178,7 @@ function Game(props: Props) {
 					<>
 						{sortedTracks.map((track) => (
 							<option key={track.uri}>
-								`{track.title}` from {track.artists.join(", ")}
+								`{track.title}` by {track.artists.join(", ")}
 							</option>
 						))}
 					</>
@@ -172,7 +186,7 @@ function Game(props: Props) {
 			case "artist":
 				return (
 					<>
-						{sortedTracks.map((track) => (
+						{deleteArtistDuplicates(sortedTracks).map((track) => (
 							<option key={track.uri}>`{track.artists.join(", ")}`</option>
 						))}
 					</>
@@ -182,7 +196,7 @@ function Game(props: Props) {
 					<>
 						{sortedTracks.map((track) => (
 							<option key={track.uri}>
-								`{track.title}` - `{track.artists[0]}`
+								`{track.title}` by `{track.artists.join(", ")}`
 							</option>
 						))}
 					</>
@@ -192,7 +206,8 @@ function Game(props: Props) {
 					<>
 						{deleteAlbumDuplicates(sortedTracks).map((track) => (
 							<option key={track.uri}>
-								`{track.album}` from `{track.artists.join(", ")}`
+								`{track.album}` - `{track.title}` by `{track.artists.join(", ")}
+								`
 							</option>
 						))}
 					</>
