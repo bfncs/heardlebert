@@ -1,7 +1,5 @@
 import { Track } from "./tracks";
 
-console.log({ secret: import.meta.env.VITE_SPOTIFY_CLIENT_ID });
-
 async function fetchAccessToken() {
 	const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 	const CLIENT_SECRET = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
