@@ -4,14 +4,11 @@ import { Track } from "./tracks";
 import classes from "./Game.module.scss";
 import { Spinner } from "@blueprintjs/core";
 import { Simulate } from "react-dom/test-utils";
+import { useAppSelector } from "./hook";
+import { useNavigate } from "react-router-dom";
 import input = Simulate.input;
-
-interface Props {
-	spotifyIframeApi: IframeApi;
-	tracks: Track[];
-	level: "easy" | "medium" | "hard";
-	gameMode: "title" | "artist" | "both" | "album";
-}
+import { setNumberOfSkips } from "./gameStateSlice";
+import { connect } from "react-redux";
 
 interface track {
 	title: string;
@@ -19,16 +16,28 @@ interface track {
 	album: string;
 }
 
-type GameState = {
+type RoundState = {
+	score: number;
 	track: number;
 	guesses: string[];
 	solution: track | null;
 };
-const initialState: GameState = {
+const initialState: RoundState = {
 	track: 0,
 	guesses: [],
 	solution: null,
+	score: 0,
 };
+
+interface ExternalProps {
+	spotifyIframeApi: IframeApi;
+}
+
+const mapDispatchToProps = {
+	setNumberOfSkips,
+};
+
+type Props = ExternalProps & typeof mapDispatchToProps;
 
 function isAnyArtistMatching(currentTrack: Track, inputValue: string) {
 	for (const artist of currentTrack.artists) {
@@ -119,337 +128,401 @@ const GUESSABLE_TRACK_LENGTHS_MEDIUM = [1500, 2500, 4500, 7500, 11500, 16500];
 const GUESSABLE_TRACK_LENGTHS_HARD = [1000, 2000, 4000, 7000, 11000, 16000];
 
 function Game(props: Props) {
-	const [state, setState] = useState<GameState>(initialState);
+	const [state, setState] = useState<RoundState>(initialState);
+	const gameState = useAppSelector((state) => state.gameState);
+	const navigate = useNavigate();
+
 	useEffect(() => {
 		setState(initialState);
-	}, [props.tracks]);
+	}, [props]);
 
-	const [inputValue, setInputValue] = useState("");
-	const sortedTracks = useMemo(
-		() => deleteDuplicates(props.tracks),
-		[props.tracks]
-	);
-
-	const currentTrack: Track = props.tracks[state.track];
-	let GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_EASY;
-	if (props.level === "medium") {
-		GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_MEDIUM;
-	} else if (props.level === "hard") {
-		GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_HARD;
-	}
-
-	let playSongLength = GUESSABLE_TRACK_LENGTHS[state.guesses.length];
-	const hasBeenSuccessfullyGuessed =
-		state.guesses.length > 0 &&
-		state.guesses.length <= GUESSABLE_TRACK_LENGTHS.length &&
-		isCorrectAnswer(
-			state.guesses[state.guesses.length - 1],
-			currentTrack,
-			props.gameMode
+	if (gameState == null) {
+		return <Spinner />;
+	} else {
+		const songs = gameState.songs;
+		const level = gameState.level;
+		const gamemode = gameState.gameMode;
+		const spotifyApiFrame = props.spotifyIframeApi;
+		const numberOfSkips = gameState.numberOfSkips;
+		const [inputValue, setInputValue] = useState("");
+		const sortedTracks = useMemo(
+			() => deleteDuplicates(gameState.allSongs),
+			[gameState.allSongs]
 		);
 
-	if (props.tracks.length === 0) {
-		return (
-			<div>
-				<Spinner />
-			</div>
-		);
-	}
-
-	function tryGuess(event: SyntheticEvent) {
-		setState({
-			...state,
-			guesses: [...state.guesses, inputValue],
-		});
-		setInputValue("");
-		if (
-			state.guesses.length >= GUESSABLE_TRACK_LENGTHS.length - 1 &&
-			!isCorrectAnswer(inputValue, props.tracks[state.track], props.gameMode)
-		) {
-			goToNextSong();
-		}
-		event.preventDefault();
-	}
-
-	function getDatalist(sortedTracks: Track[]) {
-		switch (props.gameMode) {
-			case "title":
-				return (
-					<>
-						{sortedTracks.map((track) => (
-							<option key={track.uri}>
-								`{track.title}` by {track.artists.join(", ")}
-							</option>
-						))}
-					</>
-				);
-			case "artist":
-				return (
-					<>
-						{deleteArtistDuplicates(sortedTracks).map((track) => (
-							<option key={track.uri}>`{track.artists.join(", ")}`</option>
-						))}
-					</>
-				);
-			case "both":
-				return (
-					<>
-						{sortedTracks.map((track) => (
-							<option key={track.uri}>
-								`{track.title}` by `{track.artists.join(", ")}`
-							</option>
-						))}
-					</>
-				);
-			case "album":
-				return (
-					<>
-						{deleteAlbumDuplicates(sortedTracks).map((track) => (
-							<option key={track.uri}>
-								`{track.album}` - `{track.title}` by `{track.artists.join(", ")}
-								`
-							</option>
-						))}
-					</>
-				);
+		const currentTrack: Track = songs[state.track];
+		let GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_EASY;
+		if (level === "medium") {
+			GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_MEDIUM;
+		} else if (level === "hard") {
+			GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_HARD;
 		}
 
-		return (
-			<>
-				{sortedTracks.map((track) => (
-					<option key={track.uri}>
-						{track.artists[0]} – {track.title}
-					</option>
-				))}
-			</>
-		);
-	}
+		let playSongLength = GUESSABLE_TRACK_LENGTHS[state.guesses.length];
+		const hasBeenSuccessfullyGuessed =
+			state.guesses.length > 0 &&
+			state.guesses.length <= GUESSABLE_TRACK_LENGTHS.length &&
+			isCorrectAnswer(
+				state.guesses[state.guesses.length - 1],
+				currentTrack,
+				gamemode
+			);
 
-	function getEverythingRightText() {
-		return (
-			"You did it! You have guessed the Title „" +
-			currentTrack.title +
-			"“ and the artist „" +
-			currentTrack.artists.join(" & ") +
-			"“ right."
-		);
-	}
+		function toMenu() {
+			navigate("/");
+		}
 
-	function getJustArtistRightText() {
-		return (
-			"You did it! You have guessed the artist „" +
-			currentTrack.artists.join(" & ") +
-			"“ right, but the title was „" +
-			currentTrack.title +
-			"“."
-		);
-	}
+		function tryGuess(event: SyntheticEvent) {
+			setState({
+				...state,
+				guesses: [...state.guesses, inputValue],
+			});
+			setInputValue("");
+			if (
+				state.guesses.length >= GUESSABLE_TRACK_LENGTHS.length - 1 &&
+				!isCorrectAnswer(inputValue, songs[state.track], gamemode)
+			) {
+				goToNextSong(0);
+			}
+			event.preventDefault();
+		}
 
-	function getSuccessfullyText() {
-		if (props.gameMode === "album") {
+		function getDatalist(sortedTracks: Track[]) {
+			switch (gamemode) {
+				case "title":
+					return (
+						<>
+							{sortedTracks.map((track) => (
+								<option key={track.uri}>
+									`{track.title}` by {track.artists.join(", ")}
+								</option>
+							))}
+						</>
+					);
+				case "artist":
+					return (
+						<>
+							{deleteArtistDuplicates(sortedTracks).map((track) => (
+								<option key={track.uri}>`{track.artists.join(", ")}`</option>
+							))}
+						</>
+					);
+				case "both":
+					return (
+						<>
+							{sortedTracks.map((track) => (
+								<option key={track.uri}>
+									`{track.title}` by `{track.artists.join(", ")}`
+								</option>
+							))}
+						</>
+					);
+				case "album":
+					return (
+						<>
+							{deleteAlbumDuplicates(sortedTracks).map((track) => (
+								<option key={track.uri}>
+									`{track.album}` - `{track.title}` by `
+									{track.artists.join(", ")}`
+								</option>
+							))}
+						</>
+					);
+			}
+
 			return (
-				"You did it! You have guessed the album „" +
-				currentTrack.album +
+				<>
+					{sortedTracks.map((track) => (
+						<option key={track.uri}>
+							{track.artists[0]} – {track.title}
+						</option>
+					))}
+				</>
+			);
+		}
+
+		function getEverythingRightText() {
+			return (
+				"You did it! You have guessed the Title „" +
+				currentTrack.title +
+				"“ and the artist „" +
+				currentTrack.artists.join(" & ") +
 				"“ right."
 			);
-		} else {
+		}
+
+		function getJustArtistRightText() {
 			return (
-				<>
-					{isTitleMatching(
-						state.guesses[state.guesses.length - 1],
-						currentTrack
-					)
-						? getEverythingRightText()
-						: getJustArtistRightText()}
-				</>
+				"You did it! You have guessed the artist „" +
+				currentTrack.artists.join(" & ") +
+				"“ right, but the title was „" +
+				currentTrack.title +
+				"“."
 			);
 		}
-	}
 
-	function getSuccessfullyGuessed() {
+		function getSuccessfullyText() {
+			if (gamemode === "album") {
+				return (
+					"You did it! You have guessed the album „" +
+					currentTrack.album +
+					"“ right."
+				);
+			} else {
+				return (
+					<>
+						{isTitleMatching(
+							state.guesses[state.guesses.length - 1],
+							currentTrack
+						)
+							? getEverythingRightText()
+							: getJustArtistRightText()}
+					</>
+				);
+			}
+		}
+
+		function getPointsForGuess(
+			gamemode: "title" | "artist" | "both" | "album",
+			guessCount: number
+		) {
+			const gamemodePoint = gamemode === "album" ? 100 : 200;
+			return 2000 - gamemodePoint * guessCount;
+		}
+
+		function getSuccessfullyGuessed() {
+			const points = getPointsForGuess(gamemode, state.guesses.length);
+
+			return (
+				<div className={classes.successDiv}>
+					<span className={classes.smiley}>🥳</span>
+					<div className={classes.messageSuccess}>{getSuccessfullyText()}</div>
+					<button
+						className={classes.nextTrack}
+						onClick={() => goToNextSong(points)}
+					>
+						{"Get a new Song"}
+					</button>
+				</div>
+			);
+		}
+
+		function goToNextSong(points: number) {
+			setState({
+				...initialState,
+				track: state.track + 1,
+				score: state.score + points,
+				solution: {
+					title: currentTrack.title,
+					artists: currentTrack.artists,
+					album: currentTrack.album,
+				},
+			});
+		}
+
+		function getPlaceholderForInput() {
+			switch (gamemode) {
+				case "title":
+					return "search for song title";
+				case "artist":
+					return "search for artist";
+				case "both":
+					return "search for artist / song title";
+				case "album":
+					return "search for album";
+			}
+		}
+
+		function getFormIfNotRightGuessed() {
+			const isSkippingAllowed =
+				state.guesses.length < GUESSABLE_TRACK_LENGTHS.length - 1;
+			const noMoreSkipsAllowed = numberOfSkips === 0;
+			return (
+				<form
+					onSubmit={(event) => {
+						tryGuess(event);
+					}}
+				>
+					<div className={classes.formRow}>
+						<input
+							className={classes.input}
+							placeholder={getPlaceholderForInput()}
+							type="text"
+							value={inputValue}
+							onChange={(event) => setInputValue(event.target.value)}
+							list="tracks"
+						/>
+						<datalist id="tracks">{getDatalist(sortedTracks)}</datalist>
+					</div>
+					<div className={classes.formButtons}>
+						{!noMoreSkipsAllowed ? (
+							<button
+								className={classes.hearMore}
+								type="button"
+								onClick={() => {
+									if (isSkippingAllowed) {
+										setState({
+											...state,
+											guesses: [...state.guesses, "skipped"],
+										});
+										props.setNumberOfSkips(numberOfSkips - 1);
+									} else {
+										goToNextSong(0);
+									}
+								}}
+							>
+								{isSkippingAllowed
+									? `Skip (+${
+											(GUESSABLE_TRACK_LENGTHS[state.guesses.length + 1] -
+												GUESSABLE_TRACK_LENGTHS[state.guesses.length]) /
+											1000
+									  }s)`
+									: "Next track"}
+							</button>
+						) : (
+							<button
+								className={classes.endGame}
+								type="button"
+								onClick={() => {
+									props.setNumberOfSkips(-1);
+								}}
+							>
+								End Game
+							</button>
+						)}
+
+						<button
+							className={classes.submit}
+							type="submit"
+							onClick={(event) => {
+								tryGuess(event);
+							}}
+						>
+							Submit
+						</button>
+					</div>
+				</form>
+			);
+		}
+
+		function getSolutionIfGuessedOrForm() {
+			return hasBeenSuccessfullyGuessed
+				? getSuccessfullyGuessed()
+				: getFormIfNotRightGuessed();
+		}
+
+		function getSolutionIfNotRightGuessed() {
+			switch (gamemode) {
+				case "album":
+					return (
+						<div className={classes.lastSolution}>
+							<p>
+								The Album of the last Track was <b>{state.solution!.album}</b>{" "}
+								from <b>{state.solution!.artists.join(" & ")}</b> and the Title
+								was <b>{state.solution!.title}</b>
+							</p>
+						</div>
+					);
+				case "artist":
+					return (
+						<div className={classes.lastSolution}>
+							<p>
+								The Artist of the last Track was{" "}
+								<b>{state.solution!.artists.join(" & ")}</b>
+							</p>
+						</div>
+					);
+				case "title":
+					return (
+						<div className={classes.lastSolution}>
+							<p>
+								The Title of the last Track was <b>{state.solution!.title}</b>
+							</p>
+						</div>
+					);
+
+				case "both":
+					return (
+						<div className={classes.lastSolution}>
+							<p>
+								The Title of the last Track was <b>{state.solution!.title}</b>{" "}
+								and the Artist was <b>{state.solution!.artists.join(" & ")}</b>
+							</p>
+						</div>
+					);
+			}
+		}
+
+		if (songs.length === 0) {
+			return (
+				<div>
+					<Spinner />
+				</div>
+			);
+		}
+
+		if (state.track >= songs.length || numberOfSkips < 0) {
+			return (
+				<div>
+					<h1>You have a score of {state.score}</h1>
+					<button className={classes.backToMenu} onClick={() => toMenu()}>
+						Back to Menu
+					</button>
+				</div>
+			);
+		}
+
+		if (hasBeenSuccessfullyGuessed) {
+			playSongLength = GUESSABLE_TRACK_LENGTHS[5];
+		}
+
 		return (
-			<div className={classes.successDiv}>
-				<span className={classes.smiley}>🥳</span>
-				<div className={classes.messageSuccess}>{getSuccessfullyText()}</div>
-				<button className={classes.nextTrack} onClick={goToNextSong}>
-					{"Get a new Song"}
-				</button>
+			<div className={classes.game}>
+				<div className={classes.playListName}>
+					<span>{gameState.playlistName}</span>
+				</div>
+				<span className={classes.tracksLength}>
+					{state.track + 1}/{gameState.songs.length}
+				</span>
+				<div className={classes.score}>
+					<span>Score: {state.score}</span>
+				</div>
+				{!hasBeenSuccessfullyGuessed ? (
+					<>
+						<span>
+							You have{" "}
+							<b>
+								{GUESSABLE_TRACK_LENGTHS.length - state.guesses.length} guesses
+							</b>{" "}
+							and <b>{numberOfSkips}</b> skips left
+						</span>
+						<ol className={classes.guessList}>
+							{state.guesses.map((guess, index) => (
+								<li key={index} className={classes.guessListItem}>
+									{index + 1 + ". " + guess}
+								</li>
+							))}
+						</ol>
+					</>
+				) : null}
+
+				{state.solution != null && !hasBeenSuccessfullyGuessed
+					? getSolutionIfNotRightGuessed()
+					: null}
+
+				<SpotifyPlayer
+					spotifyIframeApi={spotifyApiFrame}
+					uri={currentTrack.uri}
+					stopAfterMs={playSongLength}
+					progressBarTicksMs={GUESSABLE_TRACK_LENGTHS}
+				/>
+
+				{state.guesses.length <= GUESSABLE_TRACK_LENGTHS.length ? (
+					<div className={classes.gameForm}>{getSolutionIfGuessedOrForm()}</div>
+				) : null}
 			</div>
 		);
 	}
-
-	function goToNextSong() {
-		setState({
-			...initialState,
-			track: state.track + 1 >= props.tracks.length ? 0 : state.track + 1,
-			solution: {
-				title: currentTrack.title,
-				artists: currentTrack.artists,
-				album: currentTrack.album,
-			},
-		});
-	}
-
-	function getPlaceholderForInput() {
-		switch (props.gameMode) {
-			case "title":
-				return "search for song title";
-			case "artist":
-				return "search for artist";
-			case "both":
-				return "search for artist / song title";
-			case "album":
-				return "search for album";
-		}
-	}
-
-	function getFormIfNotRightGuessed() {
-		const isSkippingAllowed =
-			state.guesses.length < GUESSABLE_TRACK_LENGTHS.length - 1;
-		return (
-			<form
-				onSubmit={(event) => {
-					tryGuess(event);
-				}}
-			>
-				<div className={classes.formRow}>
-					<input
-						className={classes.input}
-						placeholder={getPlaceholderForInput()}
-						type="text"
-						value={inputValue}
-						onChange={(event) => setInputValue(event.target.value)}
-						list="tracks"
-					/>
-					<datalist id="tracks">{getDatalist(sortedTracks)}</datalist>
-				</div>
-				<div className={classes.formButtons}>
-					<button
-						className={classes.hearMore}
-						type="button"
-						onClick={() => {
-							if (isSkippingAllowed) {
-								setState({
-									...state,
-									guesses: [...state.guesses, "skipped"],
-								});
-							} else {
-								goToNextSong();
-							}
-						}}
-					>
-						{isSkippingAllowed
-							? `Skip (+${
-									(GUESSABLE_TRACK_LENGTHS[state.guesses.length + 1] -
-										GUESSABLE_TRACK_LENGTHS[state.guesses.length]) /
-									1000
-							  }s)`
-							: "Next track"}
-					</button>
-
-					<button
-						className={classes.submit}
-						type="submit"
-						onClick={(event) => {
-							tryGuess(event);
-						}}
-					>
-						Submit
-					</button>
-				</div>
-			</form>
-		);
-	}
-
-	function getSolutionIfGuessedOrForm() {
-		return hasBeenSuccessfullyGuessed
-			? getSuccessfullyGuessed()
-			: getFormIfNotRightGuessed();
-	}
-
-	if (hasBeenSuccessfullyGuessed) {
-		playSongLength = GUESSABLE_TRACK_LENGTHS[5];
-	}
-
-	function getSolutionIfNotRightGuessed() {
-		switch (props.gameMode) {
-			case "album":
-				return (
-					<div className={classes.lastSolution}>
-						<p>
-							The Album of the last Track was <b>{state.solution!.album}</b>{" "}
-							from <b>{state.solution!.artists.join(" & ")}</b> and the Title
-							was <b>{state.solution!.title}</b>
-						</p>
-					</div>
-				);
-			case "artist":
-				return (
-					<div className={classes.lastSolution}>
-						<p>
-							The Artist of the last Track was{" "}
-							<b>{state.solution!.artists.join(" & ")}</b>
-						</p>
-					</div>
-				);
-			case "title":
-				return (
-					<div className={classes.lastSolution}>
-						<p>
-							The Title of the last Track was <b>{state.solution!.title}</b>
-						</p>
-					</div>
-				);
-
-			case "both":
-				return (
-					<div className={classes.lastSolution}>
-						<p>
-							The Title of the last Track was <b>{state.solution!.title}</b> and
-							the Artist was <b>{state.solution!.artists.join(" & ")}</b>
-						</p>
-					</div>
-				);
-		}
-	}
-
-	return (
-		<div className={classes.game}>
-			{!hasBeenSuccessfullyGuessed ? (
-				<>
-					<span>
-						You have{" "}
-						<b>
-							{GUESSABLE_TRACK_LENGTHS.length - state.guesses.length} guesses
-							left
-						</b>
-					</span>
-					<ol className={classes.guessList}>
-						{state.guesses.map((guess, index) => (
-							<li key={index} className={classes.guessListItem}>
-								{index + 1 + ". " + guess}
-							</li>
-						))}
-					</ol>
-				</>
-			) : null}
-
-			{state.solution != null && !hasBeenSuccessfullyGuessed
-				? getSolutionIfNotRightGuessed()
-				: null}
-
-			<SpotifyPlayer
-				spotifyIframeApi={props.spotifyIframeApi}
-				uri={currentTrack.uri}
-				stopAfterMs={playSongLength}
-				progressBarTicksMs={GUESSABLE_TRACK_LENGTHS}
-			/>
-
-			{state.guesses.length <= GUESSABLE_TRACK_LENGTHS.length ? (
-				<div className={classes.gameForm}>{getSolutionIfGuessedOrForm()}</div>
-			) : null}
-		</div>
-	);
 }
 
-export default Game;
+export default connect(null, mapDispatchToProps)(Game);

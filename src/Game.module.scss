@@ -17,6 +17,18 @@
 	margin-top: 10px;
 }
 
+.score {
+	font-size: 24px;
+	font-weight: 600;
+	color: #000000;
+}
+
+.tracksLength {
+	font-size: 24px;
+	font-weight: 600;
+	color: #000000;
+}
+
 .successDiv {
 	display: flex;
 	flex-direction: column;
@@ -46,6 +58,38 @@
 	gap: 25px;
 }
 
+button {
+	font-size: 24px;
+	font-weight: 600;
+	cursor: pointer;
+	border-radius: 8px;
+	height: 48px;
+	width: 155px;
+
+	@media (max-width: 400px) {
+		font-size: 16px;
+	}
+}
+
+.backToMenu {
+	background: #FFFFFF;
+	border: 3px solid #6951FF;
+	color: #6951FF;
+
+	&:hover {
+		background: #1700a8;
+		border-color: #1700a8;
+		color: #FFFFFF;
+	}
+
+	&:disabled {
+		color: #000000;
+		background: lightgrey;
+		border-color: darkgrey;
+		cursor: not-allowed;
+	}
+}
+
 .formButtons {
 	margin-top: 10px;
 	display: flex;
@@ -53,20 +97,6 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: 25px;
-
-
-	button {
-		font-size: 24px;
-		font-weight: 600;
-		cursor: pointer;
-		border-radius: 8px;
-		height: 48px;
-		width: 155px;
-
-		@media (max-width: 400px) {
-			font-size: 16px;
-		}
-	}
 
 	.hearMore {
 		background: #FFFFFF;

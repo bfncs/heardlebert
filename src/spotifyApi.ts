@@ -1,8 +1,8 @@
 import { Track } from "./tracks";
 
 async function fetchAccessToken() {
-	const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-	const CLIENT_SECRET = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
+	const CLIENT_ID = "cb693403b2dd4814afabe873c0646cf5";
+	const CLIENT_SECRET = "90a447cd45b14f3e927186bdaf08e189";
 
 	const response = await fetch("https://accounts.spotify.com/api/token", {
 		method: "POST",

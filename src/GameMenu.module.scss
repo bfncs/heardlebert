@@ -1,0 +1,159 @@
+.headlines {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  h1 {
+    font-size: 32px;
+    line-height: 1.1;
+    font-weight: normal;
+    background: linear-gradient(90deg, rgba(105, 81, 255, 0.5) 0%, rgba(0, 133, 255, 0.5) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    text-align: center;
+    margin-bottom: 29px;
+  }
+
+  h2 {
+    font-size: 60px;
+    line-height: 1.1;
+    color: black;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 48px;
+  }
+}
+
+.containerMenu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  row-gap: 20px;
+
+  button {
+    font-size: 24px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    height: 48px;
+    width: 155px;
+
+
+    border: 3px solid #6951FF;
+    background-color: #6951FF;
+    color: #FFFFFF;
+
+    &:hover {
+      background: #1700a8;
+      border-color: #1700a8;
+    }
+
+    &:disabled {
+      color: #000000;
+      background: lightgrey;
+      border-color: darkgrey;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 400px) {
+      font-size: 16px;
+    }
+  }
+
+  select {
+    width: 50%;
+    border: none;
+    font-weight: bold;
+    text-decoration: underline;
+    color: #6951FF;
+  }
+
+  label {
+    width: 50%;
+  }
+}
+
+.playlist {
+  width: 100%;
+  display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    row-gap: 20px;
+}
+
+.gamemode {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.difficulty {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.songSize {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.numberOfSkips {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.notChangePlaylist {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+  button {
+    font-size: 16px;
+    font-weight: 600;
+    height: 36px;
+    width: 155px;
+  }
+}
+
+.changePlaylist {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    input {
+      width: 80%;
+      max-width: 250px;
+    }
+
+  button {
+    font-size: 16px;
+    font-weight: 600;
+    height: 36px;
+    width: 155px;
+  }
+}
+
+
+
+
+

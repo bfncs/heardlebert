@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.scss";
 import App from "./App";
+import { Provider } from "react-redux";
+import { store } from "./store";
 
 declare global {
 	interface Window {
@@ -14,7 +16,9 @@ window.onSpotifyIframeApiReady = window.onSpotifyIframeApiReady || {};
 window.onSpotifyIframeApiReady = (spotifyIframeApi) => {
 	ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 		<React.StrictMode>
-			<App spotifyIframeApi={spotifyIframeApi} />
+			<Provider store={store}>
+				<App spotifyIframeApi={spotifyIframeApi} />
+			</Provider>
 		</React.StrictMode>
 	);
 };
