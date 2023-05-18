@@ -463,8 +463,8 @@ function Game(props: Props) {
 
 		if (state.track >= songs.length || numberOfSkips < 0) {
 			return (
-				<div>
-					<h1>You have a score of {state.score}</h1>
+				<div className={classes.endGame}>
+					<p>You have a score of {state.score}</p>
 					<button className={classes.backToMenu} onClick={() => toMenu()}>
 						Back to Menu
 					</button>

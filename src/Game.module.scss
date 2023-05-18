@@ -71,10 +71,26 @@ button {
 	}
 }
 
+.endGame {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 25px;
+
+	p {
+		font-size: 36px;
+		line-height: 1.5;
+		color: #6951FF;
+		font-weight: 600;
+	}
+}
+
 .backToMenu {
 	background: #FFFFFF;
 	border: 3px solid #6951FF;
 	color: #6951FF;
+	width: 185px;
 
 	&:hover {
 		background: #1700a8;

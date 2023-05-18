@@ -94,13 +94,6 @@ function GameMenu(props: Props) {
 
 	return (
 		<div className={classes.containerMenu}>
-			<div className={classes.headlines}>
-				<h1>
-					<b>Heardlebert 2.0</b>
-				</h1>
-				<h2>Guess this song</h2>
-			</div>
-
 			<div className={classes.playlist}>
 				{!changePlaylist ? (
 					<div className={classes.notChangePlaylist}>
