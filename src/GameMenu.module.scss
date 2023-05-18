@@ -91,6 +91,14 @@
     justify-content: space-between;
 }
 
+.equalDistribution {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .notChangePlaylist {
     width: 100%;
     display: flex;

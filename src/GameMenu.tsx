@@ -14,6 +14,7 @@ import {
 	setNumberOfSkips,
 } from "./gameStateSlice";
 import { Spinner } from "@blueprintjs/core";
+import { Track } from "./tracks";
 
 function shuffle<T>(arr: T[]): T[] {
 	let j, x, i;
@@ -43,13 +44,44 @@ function GameMenu(props: Props) {
 	const [inputValue, setInputValue] = useState("");
 	const [playlistIsLoading, setPlaylistIsLoading] = useState(true);
 	const [changePlaylist, setChangePlaylist] = useState(false);
+	const [uniqueUsers, setUniqueUsers] = useState<string[]>([]);
+	const [shouldChooseEvenlyFromUsers, setShouldChooseEvenlyFromUsers] =
+		useState(false);
 
 	const navigate = useNavigate();
 	const gameState = useAppSelector((state) => state.gameState);
 
+	function randomInteger(min: number, max: number) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
 	function startGame() {
-		props.setSongs(playlist?.tracks.slice(0, gameState.songSize) || []);
-		props.setAllSongs(playlist?.tracks || []);
+		const songSize = gameState.songSize;
+		let usersInGame: string[] = [];
+		const songs: Track[] = [];
+		if (playlist === null) {
+			return;
+		}
+		if (uniqueUsers.length > 0 && shouldChooseEvenlyFromUsers) {
+			for (let i = 0; i < songSize; i++) {
+				const song =
+					playlist.tracks[randomInteger(0, playlist.tracks.length - 1)];
+				if (usersInGame.length === uniqueUsers.length) {
+					usersInGame = [];
+				}
+				if (usersInGame.includes(song.addedBy)) {
+					i--;
+					continue;
+				}
+				usersInGame.push(song.addedBy);
+				songs.push(song);
+			}
+		} else {
+			songs.push(...playlist.tracks.slice(0, songSize));
+		}
+
+		props.setSongs(songs);
+		props.setAllSongs(playlist.tracks);
 		navigate("/game");
 	}
 
@@ -67,6 +99,10 @@ function GameMenu(props: Props) {
 		props.setPlaylistName(playlist.name);
 		setPlaylistIsLoading(false);
 		if (!isStandard) {
+			const uniqueUsers = new Set(
+				playlist.tracks.map((track) => track.addedBy)
+			);
+			setUniqueUsers(Array.from(uniqueUsers));
 			setChangePlaylist(false);
 		}
 	}
@@ -179,6 +215,16 @@ function GameMenu(props: Props) {
 					<option value="10">10</option>
 					<option value="12">12</option>
 				</select>
+			</div>
+			<div className={classes.equalDistribution}>
+				<label>Equal distribution: </label>
+				<input
+					type="checkbox"
+					checked={shouldChooseEvenlyFromUsers}
+					onChange={(event) => {
+						setShouldChooseEvenlyFromUsers(event.target.checked);
+					}}
+				/>
 			</div>
 
 			{!playlistIsLoading && (

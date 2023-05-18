@@ -3,4 +3,6 @@ export interface Track {
 	artists: string[];
 	title: string;
 	album: string;
+
+	addedBy: string;
 }

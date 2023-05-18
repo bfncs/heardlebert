@@ -47,6 +47,9 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 		name: string;
 		tracks: {
 			items: {
+				added_by: {
+					id: string;
+				};
 				track: {
 					artists: {
 						name: string;
@@ -71,12 +74,16 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 			title: item.track.name,
 			uri: item.track.uri,
 			album: item.track.album.name,
+			addedBy: item.added_by.id,
 		})),
 	};
 
 	if (payloadFirst.tracks.next) {
 		let payload: {
 			items: {
+				added_by: {
+					id: string;
+				};
 				track: {
 					artists: {
 						name: string;
@@ -111,6 +118,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 					title: item.track.name,
 					uri: item.track.uri,
 					album: item.track.album.name,
+					addedBy: item.added_by.id,
 				}))
 			);
 		}
