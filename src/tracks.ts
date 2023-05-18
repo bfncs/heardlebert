@@ -5,4 +5,5 @@ export interface Track {
 	album: string;
 
 	addedBy: string;
+	id: string;
 }

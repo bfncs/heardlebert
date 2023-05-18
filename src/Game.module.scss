@@ -71,6 +71,11 @@ button {
 	}
 }
 
+.albumImage {
+	max-width: 250px;
+	max-height: 250px;
+}
+
 .endGame {
 	display: flex;
 	flex-direction: column;

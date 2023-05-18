@@ -27,6 +27,33 @@ export interface Playlist {
 	name: string;
 	tracks: Track[];
 }
+
+export async function fetchAlbumImage(trackId: string): Promise<string> {
+	const accessToken = await fetchAccessToken();
+	let response = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+		headers: {
+			Authorization: `Bearer ${accessToken}`,
+		},
+	});
+
+	if (response.status !== 200) {
+		throw new Error(
+			`Unable to fetch playlist (${response.status}): ${response.body}`
+		);
+	}
+
+	let payload: {
+		album: {
+			images: {
+				url: string;
+				height: number;
+				width: number;
+			}[];
+		};
+	} = await response.json();
+
+	return payload.album.images[0].url;
+}
 export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 	const accessToken = await fetchAccessToken();
 	let response = await fetch(
@@ -51,6 +78,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 					id: string;
 				};
 				track: {
+					id: string;
 					artists: {
 						name: string;
 					}[];
@@ -75,6 +103,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 			uri: item.track.uri,
 			album: item.track.album.name,
 			addedBy: item.added_by.id,
+			id: item.track.id,
 		})),
 	};
 
@@ -85,6 +114,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 					id: string;
 				};
 				track: {
+					id: string;
 					artists: {
 						name: string;
 					}[];
@@ -119,6 +149,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 					uri: item.track.uri,
 					album: item.track.album.name,
 					addedBy: item.added_by.id,
+					id: item.track.id,
 				}))
 			);
 		}

@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import input = Simulate.input;
 import { setNumberOfSkips } from "./gameStateSlice";
 import { connect } from "react-redux";
+import { fetchAlbumImage } from "./spotifyApi";
 
 interface track {
 	title: string;
@@ -129,6 +130,8 @@ const GUESSABLE_TRACK_LENGTHS_HARD = [1000, 2000, 4000, 7000, 11000, 16000];
 
 function Game(props: Props) {
 	const [state, setState] = useState<RoundState>(initialState);
+	const [loadingAlbum, setLoadingAlbum] = useState(true);
+	const [albumImage, setAlbumImage] = useState("");
 	const gameState = useAppSelector((state) => state.gameState);
 	const navigate = useNavigate();
 
@@ -149,6 +152,23 @@ function Game(props: Props) {
 			() => deleteDuplicates(gameState.allSongs),
 			[gameState.allSongs]
 		);
+
+		// useEffect with an empty dependency array works the same way as componentDidMount
+		useEffect(() => {
+			try {
+				// set loading to true before calling API
+				setLoadingAlbum(true);
+				fetchAlbumImage(currentTrack.id).then((url) => {
+					setAlbumImage(url);
+				});
+				// switch loading to false after fetch is complete
+				setLoadingAlbum(false);
+			} catch (error) {
+				// add error handling here
+				setLoadingAlbum(false);
+				console.log(error);
+			}
+		}, []);
 
 		const currentTrack: Track = songs[state.track];
 		let GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_EASY;
@@ -293,9 +313,15 @@ function Game(props: Props) {
 		function getSuccessfullyGuessed() {
 			const points = getPointsForGuess(gamemode, state.guesses.length);
 
-			return (
+			return loadingAlbum ? (
+				<Spinner />
+			) : (
 				<div className={classes.successDiv}>
-					<span className={classes.smiley}>🥳</span>
+					<img
+						src={albumImage}
+						alt={"Album Image"}
+						className={classes.albumImage}
+					/>
 					<div className={classes.messageSuccess}>{getSuccessfullyText()}</div>
 					<button
 						className={classes.nextTrack}
