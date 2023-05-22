@@ -128,6 +128,29 @@ const GUESSABLE_TRACK_LENGTHS_EASY = [3000, 4000, 6000, 9000, 13000, 18000];
 const GUESSABLE_TRACK_LENGTHS_MEDIUM = [1500, 2500, 4500, 7500, 11500, 16500];
 const GUESSABLE_TRACK_LENGTHS_HARD = [1000, 2000, 4000, 7000, 11000, 16000];
 
+function loadAlbumImage(
+	setLoadingAlbum: (value: ((prevState: boolean) => boolean) | boolean) => void,
+	currentTrack: Track,
+	setAlbumImage: (value: ((prevState: string) => string) | string) => void
+) {
+	// useEffect with an empty dependency array works the same way as componentDidMount
+	useEffect(() => {
+		try {
+			// set loading to true before calling API
+			setLoadingAlbum(true);
+			fetchAlbumImage(currentTrack.id).then((url) => {
+				setAlbumImage(url);
+			});
+			// switch loading to false after fetch is complete
+			setLoadingAlbum(false);
+		} catch (error) {
+			// add error handling here
+			setLoadingAlbum(false);
+			console.log(error);
+		}
+	}, []);
+}
+
 function Game(props: Props) {
 	const [state, setState] = useState<RoundState>(initialState);
 	const [loadingAlbum, setLoadingAlbum] = useState(true);
@@ -152,25 +175,9 @@ function Game(props: Props) {
 			() => deleteDuplicates(gameState.allSongs),
 			[gameState.allSongs]
 		);
-
-		// useEffect with an empty dependency array works the same way as componentDidMount
-		useEffect(() => {
-			try {
-				// set loading to true before calling API
-				setLoadingAlbum(true);
-				fetchAlbumImage(currentTrack.id).then((url) => {
-					setAlbumImage(url);
-				});
-				// switch loading to false after fetch is complete
-				setLoadingAlbum(false);
-			} catch (error) {
-				// add error handling here
-				setLoadingAlbum(false);
-				console.log(error);
-			}
-		}, []);
-
 		const currentTrack: Track = songs[state.track];
+
+		loadAlbumImage(setLoadingAlbum, currentTrack, setAlbumImage);
 		let GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_EASY;
 		if (level === "medium") {
 			GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_MEDIUM;
@@ -344,6 +351,8 @@ function Game(props: Props) {
 					album: currentTrack.album,
 				},
 			});
+
+			loadAlbumImage(setLoadingAlbum, songs[state.track + 1], setAlbumImage);
 		}
 
 		function getPlaceholderForInput() {
