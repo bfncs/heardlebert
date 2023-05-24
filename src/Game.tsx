@@ -128,19 +128,28 @@ const GUESSABLE_TRACK_LENGTHS_EASY = [3000, 4000, 6000, 9000, 13000, 18000];
 const GUESSABLE_TRACK_LENGTHS_MEDIUM = [1500, 2500, 4500, 7500, 11500, 16500];
 const GUESSABLE_TRACK_LENGTHS_HARD = [1000, 2000, 4000, 7000, 11000, 16000];
 
-function loadAlbumImage(
+function loadAlbumImages(
 	setLoadingAlbum: (value: ((prevState: boolean) => boolean) | boolean) => void,
-	currentTrack: Track,
-	setAlbumImage: (value: ((prevState: string) => string) | string) => void
+	tracks: Track[],
+	setAlbumImages: (
+		value:
+			| ((prevState: Map<string, string>) => Map<string, string>)
+			| Map<string, string>
+	) => void
 ) {
 	// useEffect with an empty dependency array works the same way as componentDidMount
 	useEffect(() => {
 		try {
 			// set loading to true before calling API
 			setLoadingAlbum(true);
-			fetchAlbumImage(currentTrack.id).then((url) => {
-				setAlbumImage(url);
-			});
+			const albumImages: Map<string, string> = new Map();
+			for (const track of tracks) {
+				fetchAlbumImage(track.id).then((url) => {
+					albumImages.set(track.id, url);
+				});
+			}
+			setAlbumImages(albumImages);
+
 			// switch loading to false after fetch is complete
 			setLoadingAlbum(false);
 		} catch (error) {
@@ -154,7 +163,7 @@ function loadAlbumImage(
 function Game(props: Props) {
 	const [state, setState] = useState<RoundState>(initialState);
 	const [loadingAlbum, setLoadingAlbum] = useState(true);
-	const [albumImage, setAlbumImage] = useState("");
+	const [albumImages, setAlbumImages] = useState(new Map<string, string>());
 	const gameState = useAppSelector((state) => state.gameState);
 	const navigate = useNavigate();
 
@@ -177,7 +186,7 @@ function Game(props: Props) {
 		);
 		const currentTrack: Track = songs[state.track];
 
-		loadAlbumImage(setLoadingAlbum, currentTrack, setAlbumImage);
+		loadAlbumImages(setLoadingAlbum, songs, setAlbumImages);
 		let GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_EASY;
 		if (level === "medium") {
 			GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_MEDIUM;
@@ -200,6 +209,9 @@ function Game(props: Props) {
 		}
 
 		function tryGuess(event: SyntheticEvent) {
+			if (!isCorrectAnswer(inputValue, songs[state.track], gamemode)) {
+				props.setNumberOfSkips(numberOfSkips - 1);
+			}
 			setState({
 				...state,
 				guesses: [...state.guesses, inputValue],
@@ -325,7 +337,7 @@ function Game(props: Props) {
 			) : (
 				<div className={classes.successDiv}>
 					<img
-						src={albumImage}
+						src={albumImages.get(currentTrack.id)}
 						alt={"Album Image"}
 						className={classes.albumImage}
 					/>
@@ -351,8 +363,6 @@ function Game(props: Props) {
 					album: currentTrack.album,
 				},
 			});
-
-			loadAlbumImage(setLoadingAlbum, songs[state.track + 1], setAlbumImage);
 		}
 
 		function getPlaceholderForInput() {
@@ -529,7 +539,7 @@ function Game(props: Props) {
 							<b>
 								{GUESSABLE_TRACK_LENGTHS.length - state.guesses.length} guesses
 							</b>{" "}
-							and <b>{numberOfSkips}</b> skips left
+							and <b>{numberOfSkips}</b> skips or false answers left
 						</span>
 						<ol className={classes.guessList}>
 							{state.guesses.map((guess, index) => (
