@@ -12,7 +12,7 @@ export interface GameState {
 	currentSong: number;
 	score: number;
 	playlistName: string;
-	numberOfSkips: number;
+	numberOfSkips: number | null;
 }
 
 export const initialState: GameState = {
@@ -59,7 +59,8 @@ export const gameStateSlice = createSlice({
 		setPlaylistName: (state, action: PayloadAction<string>) => {
 			state.playlistName = action.payload;
 		},
-		setNumberOfSkips: (state, action: PayloadAction<number>) => {
+		setNumberOfSkips: (state, action: PayloadAction<number | null>) => {
+			console.log("setNumberOfSkips", action.payload);
 			state.numberOfSkips = action.payload;
 		},
 	},

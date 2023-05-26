@@ -194,6 +194,7 @@ function Game(props: Props) {
 		const gamemode = gameState.gameMode;
 		const spotifyApiFrame = props.spotifyIframeApi;
 		const numberOfSkips = gameState.numberOfSkips;
+		console.log("numberOfSkips: " + numberOfSkips);
 		const [inputValue, setInputValue] = useState("");
 		const sortedTracks = useMemo(
 			() => deleteDuplicates(gameState.allSongs),
@@ -226,7 +227,10 @@ function Game(props: Props) {
 		}
 
 		function tryGuess(event: SyntheticEvent) {
-			if (!isCorrectAnswer(inputValue, songs[state.track], gamemode)) {
+			if (
+				!isCorrectAnswer(inputValue, songs[state.track], gamemode) &&
+				numberOfSkips != null
+			) {
 				props.setNumberOfSkips(numberOfSkips - 1);
 			}
 			setState({
@@ -398,7 +402,7 @@ function Game(props: Props) {
 		function getFormIfNotRightGuessed() {
 			const isSkippingAllowed =
 				state.guesses.length < GUESSABLE_TRACK_LENGTHS.length - 1;
-			const noMoreSkipsAllowed = numberOfSkips === 0;
+			const noMoreSkipsAllowed = numberOfSkips != null && numberOfSkips === 0;
 			return (
 				<form
 					onSubmit={(event) => {
@@ -427,7 +431,9 @@ function Game(props: Props) {
 											...state,
 											guesses: [...state.guesses, "skipped"],
 										});
-										props.setNumberOfSkips(numberOfSkips - 1);
+										if (numberOfSkips) {
+											props.setNumberOfSkips(numberOfSkips - 1);
+										}
 									} else {
 										goToNextSong(0);
 									}
@@ -446,7 +452,9 @@ function Game(props: Props) {
 								className={classes.endGame}
 								type="button"
 								onClick={() => {
-									props.setNumberOfSkips(-1);
+									if (numberOfSkips != null) {
+										props.setNumberOfSkips(-1);
+									}
 									goToNextSong(0);
 								}}
 							>
@@ -524,7 +532,7 @@ function Game(props: Props) {
 			);
 		}
 
-		if (state.track >= songs.length || numberOfSkips < 0) {
+		if (state.track >= songs.length || (numberOfSkips && numberOfSkips < 0)) {
 			return (
 				<div className={classes.endGameDiv}>
 					{getSolutionIfNotRightGuessed()}
@@ -560,8 +568,13 @@ function Game(props: Props) {
 							<b>
 								{GUESSABLE_TRACK_LENGTHS.length - state.guesses.length} guesses
 							</b>{" "}
-							and <b>{numberOfSkips}</b> skips or false answers left
+							left
 						</span>
+						{numberOfSkips != null ? (
+							<span>
+								You have <b>{numberOfSkips} skips or false anwers</b> left
+							</span>
+						) : null}
 						<ol className={classes.guessList}>
 							{state.guesses.map((guess, index) => (
 								<li key={index} className={classes.guessListItem}>

@@ -203,22 +203,17 @@ function GameMenu(props: Props) {
 			</div>
 			<div className={classes.numberOfSkips}>
 				<label>Number of skips: </label>
-				<select
-					value={gameState.numberOfSkips.toString()}
+				<input
+					type="number"
+					value={gameState.numberOfSkips || ""}
 					onChange={(event) => {
 						props.setNumberOfSkips(
-							Number.parseInt(
-								event.target.value as "1" | "5" | "8" | "10" | "12"
-							)
+							event.target.value.trim() !== ""
+								? Number.parseInt(event.target.value)
+								: null
 						);
 					}}
-				>
-					<option value="1">1</option>
-					<option value="5">5</option>
-					<option value="8">8</option>
-					<option value="10">10</option>
-					<option value="12">12</option>
-				</select>
+				/>
 			</div>
 			<div className={classes.equalDistribution}>
 				<label>Equal distribution: </label>
