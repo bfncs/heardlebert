@@ -568,7 +568,7 @@ function Game(props: Props) {
 							<b>
 								{GUESSABLE_TRACK_LENGTHS.length - state.guesses.length} guesses
 							</b>{" "}
-							left
+							left <br />
 						</span>
 						{numberOfSkips != null ? (
 							<span>
