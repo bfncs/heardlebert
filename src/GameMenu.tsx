@@ -86,7 +86,8 @@ function GameMenu(props: Props) {
 	}
 
 	useEffect(() => {
-		const standardPlaylistId = "37i9dQZF1DX4o1oenSJRJd";
+		const standardPlaylistId =
+			localStorage.getItem("playlistId") || "37i9dQZF1DX4o1oenSJRJd";
 		(async () => {
 			setPlaylistId(standardPlaylistId, true);
 		})();
@@ -97,6 +98,9 @@ function GameMenu(props: Props) {
 		const playlist = await fetchPlaylist(playlistId);
 		setPlaylist({ ...playlist, tracks: shuffle(playlist.tracks) });
 		props.setPlaylistName(playlist.name);
+
+		localStorage.setItem("playlistId", playlistId);
+
 		setPlaylistIsLoading(false);
 		if (!isStandard) {
 			const uniqueUsers = new Set(

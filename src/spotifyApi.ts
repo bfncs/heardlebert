@@ -1,4 +1,6 @@
 import { Track } from "./tracks";
+import { Simulate } from "react-dom/test-utils";
+import play = Simulate.play;
 
 async function fetchAccessToken() {
 	const CLIENT_ID = "cb693403b2dd4814afabe873c0646cf5";
@@ -26,6 +28,7 @@ async function fetchAccessToken() {
 export interface Playlist {
 	name: string;
 	tracks: Track[];
+	snapshot_id: string;
 }
 
 export async function fetchAlbumImage(trackId: string): Promise<string> {
@@ -72,6 +75,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 	}
 	let payloadFirst: {
 		name: string;
+		snapshot_id: string;
 		tracks: {
 			items: {
 				added_by: {
@@ -97,6 +101,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 
 	const playlist: Playlist = {
 		name: payloadFirst.name,
+		snapshot_id: payloadFirst.snapshot_id,
 		tracks: payloadFirst.tracks.items.map((item) => ({
 			artists: item.track.artists.map((artist) => artist.name),
 			title: item.track.name,
@@ -106,6 +111,15 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 			id: item.track.id,
 		})),
 	};
+
+	const localStoragePlaylist = localStorage.getItem(playlistId);
+
+	if (
+		localStoragePlaylist &&
+		JSON.parse(localStoragePlaylist).snapshot_id === playlist.snapshot_id
+	) {
+		return JSON.parse(localStoragePlaylist);
+	}
 
 	if (payloadFirst.tracks.next) {
 		let payload: {
@@ -154,5 +168,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 			);
 		}
 	}
+
+	localStorage.setItem(playlistId, JSON.stringify(playlist));
 	return playlist;
 }

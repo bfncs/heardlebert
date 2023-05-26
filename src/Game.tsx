@@ -7,7 +7,16 @@ import { Simulate } from "react-dom/test-utils";
 import { useAppSelector } from "./hook";
 import { useNavigate } from "react-router-dom";
 import input = Simulate.input;
-import { setNumberOfSkips } from "./gameStateSlice";
+import {
+	gameStateSlice,
+	setAllSongs,
+	setGameMode,
+	setLevel,
+	setNumberOfSkips,
+	setPlaylistName,
+	setSongs,
+	setSongSize,
+} from "./gameStateSlice";
 import { connect } from "react-redux";
 import { fetchAlbumImage } from "./spotifyApi";
 
@@ -35,7 +44,13 @@ interface ExternalProps {
 }
 
 const mapDispatchToProps = {
+	setGameMode,
+	setLevel,
+	setSongSize,
+	setSongs,
+	setAllSongs,
 	setNumberOfSkips,
+	setPlaylistName,
 };
 
 type Props = ExternalProps & typeof mapDispatchToProps;
@@ -205,6 +220,8 @@ function Game(props: Props) {
 			);
 
 		function toMenu() {
+			setState(initialState);
+			props.setNumberOfSkips(gameStateSlice.getInitialState().numberOfSkips);
 			navigate("/");
 		}
 
