@@ -430,6 +430,7 @@ function Game(props: Props) {
 								type="button"
 								onClick={() => {
 									props.setNumberOfSkips(-1);
+									goToNextSong(0);
 								}}
 							>
 								End Game
@@ -508,11 +509,14 @@ function Game(props: Props) {
 
 		if (state.track >= songs.length || numberOfSkips < 0) {
 			return (
-				<div className={classes.endGame}>
-					<p>You have a score of {state.score}</p>
-					<button className={classes.backToMenu} onClick={() => toMenu()}>
-						Back to Menu
-					</button>
+				<div className={classes.endGameDiv}>
+					{getSolutionIfNotRightGuessed()}
+					<div className={classes.endGame}>
+						<p>You have a score of {state.score}</p>
+						<button className={classes.backToMenu} onClick={() => toMenu()}>
+							Back to Menu
+						</button>
+					</div>
 				</div>
 			);
 		}
