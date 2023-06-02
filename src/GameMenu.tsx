@@ -59,6 +59,9 @@ function GameMenu(props: Props) {
 		const songSize = gameState.songSize;
 		let usersInGame: string[] = [];
 		const songs: Track[] = [];
+
+		const users: string[] = [];
+
 		if (playlist === null) {
 			return;
 		}
@@ -74,6 +77,7 @@ function GameMenu(props: Props) {
 					continue;
 				}
 				usersInGame.push(song.addedBy);
+				users.push(song.addedBy);
 				songs.push(song);
 			}
 		} else {
@@ -82,6 +86,7 @@ function GameMenu(props: Props) {
 
 		props.setSongs(songs);
 		props.setAllSongs(playlist.tracks);
+		console.log("users", users);
 		navigate("/game");
 	}
 
