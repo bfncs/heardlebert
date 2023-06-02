@@ -86,7 +86,6 @@ function GameMenu(props: Props) {
 
 		props.setSongs(songs);
 		props.setAllSongs(playlist.tracks);
-		console.log("users", users);
 		navigate("/game");
 	}
 
@@ -94,7 +93,10 @@ function GameMenu(props: Props) {
 		const standardPlaylistId =
 			localStorage.getItem("playlistId") || "37i9dQZF1DX4o1oenSJRJd";
 		(async () => {
-			setPlaylistId(standardPlaylistId, true);
+			setPlaylistId(
+				standardPlaylistId,
+				localStorage.getItem("playlistId") === null
+			);
 		})();
 	}, []);
 
@@ -105,8 +107,6 @@ function GameMenu(props: Props) {
 		props.setPlaylistName(playlist.name);
 
 		localStorage.setItem("playlistId", playlistId);
-
-		setPlaylistIsLoading(false);
 		if (!isStandard) {
 			const uniqueUsers = new Set(
 				playlist.tracks.map((track) => track.addedBy)
@@ -114,6 +114,7 @@ function GameMenu(props: Props) {
 			setUniqueUsers(Array.from(uniqueUsers));
 			setChangePlaylist(false);
 		}
+		setPlaylistIsLoading(false);
 	}
 
 	function getChangePlaylist() {

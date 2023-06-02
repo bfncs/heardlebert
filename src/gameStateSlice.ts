@@ -60,7 +60,6 @@ export const gameStateSlice = createSlice({
 			state.playlistName = action.payload;
 		},
 		setNumberOfSkips: (state, action: PayloadAction<number | null>) => {
-			console.log("setNumberOfSkips", action.payload);
 			state.numberOfSkips = action.payload;
 		},
 	},

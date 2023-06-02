@@ -195,7 +195,6 @@ function Game(props: Props) {
 		const gamemode = gameState.gameMode;
 		const spotifyApiFrame = props.spotifyIframeApi;
 		const numberOfSkips = gameState.numberOfSkips;
-		console.log("numberOfSkips: " + numberOfSkips);
 		const [inputValue, setInputValue] = useState("");
 		const sortedTracks = useMemo(
 			() => deleteDuplicates(gameState.allSongs),
