@@ -24,6 +24,7 @@ interface track {
 	title: string;
 	artists: string[];
 	album: string;
+	addedBy: string;
 }
 
 type RoundState = {
@@ -382,6 +383,7 @@ function Game(props: Props) {
 					title: currentTrack.title,
 					artists: currentTrack.artists,
 					album: currentTrack.album,
+					addedBy: currentTrack.addedBy,
 				},
 			});
 		}
@@ -499,7 +501,8 @@ function Game(props: Props) {
 						<div className={classes.lastSolution}>
 							<p>
 								The Artist of the last Track was{" "}
-								<b>{state.solution!.artists.join(" & ")}</b>
+								<b>{state.solution!.artists.join(" & ")}</b> added by{" "}
+								{state.solution!.addedBy}
 							</p>
 						</div>
 					);
@@ -507,7 +510,8 @@ function Game(props: Props) {
 					return (
 						<div className={classes.lastSolution}>
 							<p>
-								The Title of the last Track was <b>{state.solution!.title}</b>
+								The Title of the last Track was <b>{state.solution!.title}</b>{" "}
+								added by {state.solution!.addedBy}
 							</p>
 						</div>
 					);
@@ -517,7 +521,8 @@ function Game(props: Props) {
 						<div className={classes.lastSolution}>
 							<p>
 								The Title of the last Track was <b>{state.solution!.title}</b>{" "}
-								and the Artist was <b>{state.solution!.artists.join(" & ")}</b>
+								and the Artist was <b>{state.solution!.artists.join(" & ")}</b>{" "}
+								added by {state.solution!.addedBy}
 							</p>
 						</div>
 					);
