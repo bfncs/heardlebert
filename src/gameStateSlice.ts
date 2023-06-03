@@ -13,6 +13,7 @@ export interface GameState {
 	score: number;
 	playlistName: string;
 	numberOfSkips: number | null;
+	usernames: string[];
 }
 
 export const initialState: GameState = {
@@ -25,6 +26,7 @@ export const initialState: GameState = {
 	score: 0,
 	playlistName: "",
 	numberOfSkips: 8,
+	usernames: [],
 };
 
 export const gameStateSlice = createSlice({
@@ -62,6 +64,9 @@ export const gameStateSlice = createSlice({
 		setNumberOfSkips: (state, action: PayloadAction<number | null>) => {
 			state.numberOfSkips = action.payload;
 		},
+		setUsernames: (state, action: PayloadAction<string[]>) => {
+			state.usernames = action.payload;
+		},
 	},
 });
 
@@ -75,4 +80,5 @@ export const {
 	setAllSongs,
 	setPlaylistName,
 	setNumberOfSkips,
+	setUsernames,
 } = gameStateSlice.actions;

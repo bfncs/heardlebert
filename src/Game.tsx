@@ -18,7 +18,12 @@ import {
 	setSongSize,
 } from "./gameStateSlice";
 import { connect } from "react-redux";
-import { fetchAlbumImage } from "./spotifyApi";
+import {
+	fetchAlbumImage,
+	fetchUsernames,
+	fetchUsersplaylist,
+	Playlist,
+} from "./spotifyApi";
 
 interface track {
 	title: string;
@@ -176,10 +181,74 @@ function loadAlbumImages(
 	}, []);
 }
 
+function getAllUsersPlaylist(
+	setLoadUserPlaylists: (
+		value: ((prevState: boolean) => boolean) | boolean
+	) => void,
+	userIds: string[],
+	setUserPlaylists: (
+		value: ((prevState: Playlist[]) => Playlist[]) | Playlist[]
+	) => void
+) {
+	// useEffect with an empty dependency array works the same way as componentDidMount
+	useEffect(() => {
+		try {
+			// set loading to true before calling API
+			setLoadUserPlaylists(true);
+			fetchUsersplaylist(userIds).then((response) => {
+				setUserPlaylists(response);
+				setLoadUserPlaylists(false);
+			});
+
+			// switch loading to false after fetch is complete
+			setLoadUserPlaylists(false);
+		} catch (error) {
+			// add error handling here
+			setLoadUserPlaylists(false);
+			console.log(error);
+		}
+	}, []);
+}
+
+function getAllUsernames(
+	setLoadUsernames: (
+		value: ((prevState: boolean) => boolean) | boolean
+	) => void,
+	userIds: string[],
+	setUsernames: (
+		value:
+			| ((prevState: Map<string, string>) => Map<string, string>)
+			| Map<string, string>
+	) => void
+) {
+	// useEffect with an empty dependency array works the same way as componentDidMount
+	useEffect(() => {
+		try {
+			// set loading to true before calling API
+			setLoadUsernames(true);
+			fetchUsernames(userIds).then((response) => {
+				setUsernames(response);
+				setLoadUsernames(false);
+			});
+
+			// switch loading to false after fetch is complete
+			setLoadUsernames(false);
+		} catch (error) {
+			// add error handling here
+			setLoadUsernames(false);
+			console.log(error);
+		}
+	}, []);
+}
+
 function Game(props: Props) {
 	const [state, setState] = useState<RoundState>(initialState);
 	const [loadingAlbum, setLoadingAlbum] = useState(true);
 	const [albumImages, setAlbumImages] = useState(new Map<string, string>());
+	const [usernames, setUsernames] = useState(new Map<string, string>());
+	const [loadUsernames, setLoadUsernames] = useState(true);
+	const [userPlaylists, setUserPlaylists] = useState<Playlist[]>([]);
+	const [loadUserPlaylists, setLoadUserPlaylists] = useState(true);
 	const gameState = useAppSelector((state) => state.gameState);
 	const navigate = useNavigate();
 
@@ -203,6 +272,13 @@ function Game(props: Props) {
 		const currentTrack: Track = songs[state.track];
 
 		loadAlbumImages(setLoadingAlbum, songs, setAlbumImages);
+		getAllUsernames(setLoadUsernames, gameState.usernames, setUsernames);
+		getAllUsersPlaylist(
+			setLoadUserPlaylists,
+			gameState.usernames,
+			setUserPlaylists
+		);
+
 		let GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_EASY;
 		if (level === "medium") {
 			GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_MEDIUM;
@@ -307,7 +383,9 @@ function Game(props: Props) {
 				currentTrack.title +
 				"“ and the artist „" +
 				currentTrack.artists.join(" & ") +
-				"“ right."
+				"“ right." +
+				" Added to your playlist by " +
+				usernames.get(currentTrack.addedBy)
 			);
 		}
 
@@ -491,7 +569,8 @@ function Game(props: Props) {
 							<p>
 								The Album of the last Track was <b>{state.solution!.album}</b>{" "}
 								from <b>{state.solution!.artists.join(" & ")}</b> and the Title
-								was <b>{state.solution!.title}</b>
+								was <b>{state.solution!.title}</b> added by{" "}
+								{usernames.get(state.solution!.addedBy)}
 							</p>
 						</div>
 					);
@@ -501,7 +580,7 @@ function Game(props: Props) {
 							<p>
 								The Artist of the last Track was{" "}
 								<b>{state.solution!.artists.join(" & ")}</b> added by{" "}
-								{state.solution!.addedBy}
+								{usernames.get(state.solution!.addedBy)}
 							</p>
 						</div>
 					);
@@ -510,7 +589,7 @@ function Game(props: Props) {
 						<div className={classes.lastSolution}>
 							<p>
 								The Title of the last Track was <b>{state.solution!.title}</b>{" "}
-								added by {state.solution!.addedBy}
+								added by {usernames.get(state.solution!.addedBy)}
 							</p>
 						</div>
 					);
@@ -521,7 +600,7 @@ function Game(props: Props) {
 							<p>
 								The Title of the last Track was <b>{state.solution!.title}</b>{" "}
 								and the Artist was <b>{state.solution!.artists.join(" & ")}</b>{" "}
-								added by {state.solution!.addedBy}
+								added by {usernames.get(state.solution!.addedBy)}
 							</p>
 						</div>
 					);

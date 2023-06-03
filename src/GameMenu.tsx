@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { fetchPlaylist, Playlist } from "./spotifyApi";
+import {
+	fetchAlbumImage,
+	fetchPlaylist,
+	fetchUsernames,
+	Playlist,
+} from "./spotifyApi";
 import classes from "./GameMenu.module.scss";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "./hook";
@@ -12,6 +17,7 @@ import {
 	setAllSongs,
 	setPlaylistName,
 	setNumberOfSkips,
+	setUsernames,
 } from "./gameStateSlice";
 import { Spinner } from "@blueprintjs/core";
 import { Track } from "./tracks";
@@ -35,6 +41,7 @@ const mapDispatchToProps = {
 	setAllSongs,
 	setNumberOfSkips,
 	setPlaylistName,
+	setUsernames,
 };
 
 type Props = typeof mapDispatchToProps;
@@ -86,6 +93,7 @@ function GameMenu(props: Props) {
 
 		props.setSongs(songs);
 		props.setAllSongs(playlist.tracks);
+		props.setUsernames([...new Set(users)]);
 		navigate("/game");
 	}
 

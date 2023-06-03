@@ -31,6 +31,15 @@ export interface Playlist {
 	snapshot_id: string;
 }
 
+export interface UsersPlaylist {
+	name: string;
+	id: string;
+	tracks: {
+		href: string;
+	};
+	user: string;
+}
+
 export async function fetchAlbumImage(trackId: string): Promise<string> {
 	const accessToken = await fetchAccessToken();
 	let response = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
@@ -57,6 +66,92 @@ export async function fetchAlbumImage(trackId: string): Promise<string> {
 
 	return payload.album.images[0].url;
 }
+
+export async function fetchUsersplaylist(
+	userIds: string[]
+): Promise<UsersPlaylist[]> {
+	const accessToken = await fetchAccessToken();
+	const playlists: UsersPlaylist[] = [];
+	let response;
+	for (const userId of userIds) {
+		response = await fetch(
+			`https://api.spotify.com/v1/users/${userId}/playlists`,
+			{
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			}
+		);
+
+		if (response.status !== 200) {
+			throw new Error(
+				`Unable to fetch playlist (${response.status}): ${response.body}`
+			);
+		}
+
+		let payload: {
+			items: {
+				name: string;
+				id: string;
+				tracks: {
+					href: string;
+				};
+			}[];
+		} = await response.json();
+
+		for (const playlist of payload.items) {
+			console.log("playlist", playlist);
+			playlists.push({
+				name: playlist.name,
+				id: playlist.id,
+				tracks: playlist.tracks,
+				user: userId,
+			});
+		}
+	}
+	console.log("allPlaylists", playlists);
+
+	const normalPlaylist: Playlist[] = [];
+
+	for (const playlist of playlists) {
+		//fetchPlaylist(playlist.id).then((playlist) => {
+		//    normalPlaylist.push(playlist);
+		//});
+		// TODO: Achtung! Löst Api Limit aus!
+	}
+
+	console.log("normalPlaylist", normalPlaylist);
+	return playlists;
+}
+
+export async function fetchUsernames(
+	userIds: string[]
+): Promise<Map<string, string>> {
+	const accessToken = await fetchAccessToken();
+	const usernames = new Map<string, string>();
+	let response;
+
+	for (const userId of userIds) {
+		response = await fetch(`https://api.spotify.com/v1/users/${userId}`, {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		});
+		if (response.status !== 200) {
+			throw new Error(
+				`Unable to fetch playlist (${response.status}): ${response.body}`
+			);
+		}
+		let payload: {
+			display_name: string;
+			id: string;
+		} = await response.json();
+
+		usernames.set(payload.id, payload.display_name);
+	}
+	return usernames;
+}
+
 export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 	const accessToken = await fetchAccessToken();
 	let response = await fetch(
