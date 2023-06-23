@@ -67,8 +67,6 @@ function GameMenu(props: Props) {
 		let usersInGame: string[] = [];
 		const songs: Track[] = [];
 
-		const users: string[] = [];
-
 		if (playlist === null) {
 			return;
 		}
@@ -84,7 +82,6 @@ function GameMenu(props: Props) {
 					continue;
 				}
 				usersInGame.push(song.addedBy);
-				users.push(song.addedBy);
 				songs.push(song);
 			}
 		} else {
@@ -93,7 +90,7 @@ function GameMenu(props: Props) {
 
 		props.setSongs(songs);
 		props.setAllSongs(playlist.tracks);
-		props.setUsernames([...new Set(users)]);
+		props.setUsernames([...new Set(uniqueUsers)]);
 		navigate("/game");
 	}
 
@@ -172,7 +169,12 @@ function GameMenu(props: Props) {
 					value={gameState.gameMode}
 					onChange={(event) => {
 						props.setGameMode(
-							event.target.value as "title" | "album" | "both" | "artist"
+							event.target.value as
+								| "title"
+								| "album"
+								| "both"
+								| "artist"
+								| "user"
 						);
 					}}
 				>
@@ -180,6 +182,7 @@ function GameMenu(props: Props) {
 					<option value="album">Album</option>
 					<option value="both">Title & Artist</option>
 					<option value="artist">Artist</option>
+					<option value="user">User</option>
 				</select>{" "}
 			</div>
 			<div className={classes.difficulty}>

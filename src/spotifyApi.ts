@@ -100,7 +100,6 @@ export async function fetchUsersplaylist(
 		} = await response.json();
 
 		for (const playlist of payload.items) {
-			console.log("playlist", playlist);
 			playlists.push({
 				name: playlist.name,
 				id: playlist.id,
@@ -109,7 +108,6 @@ export async function fetchUsersplaylist(
 			});
 		}
 	}
-	console.log("allPlaylists", playlists);
 
 	const normalPlaylist: Playlist[] = [];
 
@@ -120,7 +118,6 @@ export async function fetchUsersplaylist(
 		// TODO: Achtung! Löst Api Limit aus!
 	}
 
-	console.log("normalPlaylist", normalPlaylist);
 	return playlists;
 }
 

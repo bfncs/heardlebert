@@ -4,7 +4,7 @@ import { Track } from "./tracks";
 // Define a type for the slice state
 export interface GameState {
 	level: "easy" | "medium" | "hard";
-	gameMode: "title" | "artist" | "both" | "album";
+	gameMode: "title" | "artist" | "both" | "album" | "user";
 	songSize: number;
 
 	songs: Track[];
@@ -18,7 +18,7 @@ export interface GameState {
 
 export const initialState: GameState = {
 	level: "easy",
-	gameMode: "title",
+	gameMode: "both",
 	songSize: 10,
 	songs: [],
 	allSongs: [],
@@ -42,7 +42,7 @@ export const gameStateSlice = createSlice({
 		},
 		setGameMode: (
 			state,
-			action: PayloadAction<"title" | "artist" | "both" | "album">
+			action: PayloadAction<"title" | "artist" | "both" | "album" | "user">
 		) => {
 			state.gameMode = action.payload;
 		},

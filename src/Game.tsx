@@ -18,12 +18,7 @@ import {
 	setSongSize,
 } from "./gameStateSlice";
 import { connect } from "react-redux";
-import {
-	fetchAlbumImage,
-	fetchUsernames,
-	fetchUsersplaylist,
-	Playlist,
-} from "./spotifyApi";
+import { fetchAlbumImage, fetchUsernames, Playlist } from "./spotifyApi";
 
 interface track {
 	title: string;
@@ -76,10 +71,21 @@ function isAlbumMatching(inputValue: string, currentTrack: Track) {
 	return inputValue.toLowerCase().includes(currentTrack.album.toLowerCase());
 }
 
+function isUserMatching(
+	inputValue: string,
+	currentTrack: Track,
+	usernames: Map<string, string>
+) {
+	return inputValue
+		.toLowerCase()
+		.includes(usernames.get(currentTrack.addedBy)?.toLowerCase() ?? "");
+}
+
 function isCorrectAnswer(
 	inputValue: string,
 	currentTrack: Track,
-	gamemode: "title" | "artist" | "both" | "album" = "both"
+	gamemode: "title" | "artist" | "both" | "album" | "user" = "both",
+	usernames?: Map<string, string>
 ) {
 	switch (gamemode) {
 		case "title":
@@ -93,6 +99,8 @@ function isCorrectAnswer(
 			);
 		case "album":
 			return isAlbumMatching(inputValue, currentTrack);
+		case "user":
+			return isUserMatching(inputValue, currentTrack, usernames!);
 	}
 }
 
@@ -138,6 +146,19 @@ function deleteArtistDuplicates(tracks: Track[]): Track[] {
 			i === 0 ||
 			result.filter((t) => t.artists.join(",") === tracks[i].artists.join(","))
 				.length === 0
+		) {
+			result.push(tracks[i]);
+		}
+	}
+	return result;
+}
+
+function deleteUserDuplicates(tracks: Track[]): Track[] {
+	const result: Track[] = [];
+	for (let i = 0; i < tracks.length; i++) {
+		if (
+			i === 0 ||
+			result.filter((t) => t.addedBy === tracks[i].addedBy).length === 0
 		) {
 			result.push(tracks[i]);
 		}
@@ -195,10 +216,11 @@ function getAllUsersPlaylist(
 		try {
 			// set loading to true before calling API
 			setLoadUserPlaylists(true);
-			fetchUsersplaylist(userIds).then((response) => {
+			/*fetchUsersplaylist(userIds).then((response) => {
 				setUserPlaylists(response);
 				setLoadUserPlaylists(false);
-			});
+			});*/
+			// ACHTUNG !!!! API LIMIT SPOTIFY
 
 			// switch loading to false after fetch is complete
 			setLoadUserPlaylists(false);
@@ -293,7 +315,8 @@ function Game(props: Props) {
 			isCorrectAnswer(
 				state.guesses[state.guesses.length - 1],
 				currentTrack,
-				gamemode
+				gamemode,
+				gamemode === "user" ? usernames : undefined
 			);
 
 		function toMenu() {
@@ -304,7 +327,12 @@ function Game(props: Props) {
 
 		function tryGuess(event: SyntheticEvent) {
 			if (
-				!isCorrectAnswer(inputValue, songs[state.track], gamemode) &&
+				!isCorrectAnswer(
+					inputValue,
+					songs[state.track],
+					gamemode,
+					gamemode === "user" ? usernames : undefined
+				) &&
 				numberOfSkips != null
 			) {
 				props.setNumberOfSkips(numberOfSkips - 1);
@@ -316,7 +344,12 @@ function Game(props: Props) {
 			setInputValue("");
 			if (
 				state.guesses.length >= GUESSABLE_TRACK_LENGTHS.length - 1 &&
-				!isCorrectAnswer(inputValue, songs[state.track], gamemode)
+				!isCorrectAnswer(
+					inputValue,
+					songs[state.track],
+					gamemode,
+					gamemode === "user" ? usernames : undefined
+				)
 			) {
 				goToNextSong(0);
 			}
@@ -350,6 +383,14 @@ function Game(props: Props) {
 								<option key={track.uri}>
 									`{track.title}` by `{track.artists.join(", ")}`
 								</option>
+							))}
+						</>
+					);
+				case "user":
+					return (
+						<>
+							{deleteUserDuplicates(sortedTracks).map((track) => (
+								<option key={track.uri}>{usernames.get(track.addedBy)}</option>
 							))}
 						</>
 					);
@@ -389,6 +430,16 @@ function Game(props: Props) {
 			);
 		}
 
+		function getUserNameRightText() {
+			return (
+				"You did it! You have guessed the user „" +
+				usernames.get(currentTrack.addedBy) +
+				"“ right, by the way the title was „" +
+				currentTrack.title +
+				"“."
+			);
+		}
+
 		function getJustArtistRightText() {
 			return (
 				"You did it! You have guessed the artist „" +
@@ -406,6 +457,8 @@ function Game(props: Props) {
 					currentTrack.album +
 					"“ right."
 				);
+			} else if (gamemode === "user") {
+				return getUserNameRightText();
 			} else {
 				return (
 					<>
@@ -421,7 +474,7 @@ function Game(props: Props) {
 		}
 
 		function getPointsForGuess(
-			gamemode: "title" | "artist" | "both" | "album",
+			gamemode: "title" | "artist" | "both" | "album" | "user",
 			guessCount: number
 		) {
 			const gamemodePoint = gamemode === "album" ? 100 : 200;
@@ -473,6 +526,8 @@ function Game(props: Props) {
 					return "search for artist";
 				case "both":
 					return "search for artist / song title";
+				case "user":
+					return "search for user";
 				case "album":
 					return "search for album";
 			}
@@ -571,6 +626,17 @@ function Game(props: Props) {
 								from <b>{state.solution!.artists.join(" & ")}</b> and the Title
 								was <b>{state.solution!.title}</b> added by{" "}
 								{usernames.get(state.solution!.addedBy)}
+							</p>
+						</div>
+					);
+				case "user":
+					return (
+						<div className={classes.lastSolution}>
+							<p>
+								The User of the last Track was{" "}
+								<b>{usernames.get(state.solution!.addedBy)}</b> and the Title
+								was <b>{state.solution!.title}</b> from{" "}
+								<b>{state.solution!.artists.join(" & ")}</b>
 							</p>
 						</div>
 					);
