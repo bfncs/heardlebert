@@ -178,7 +178,7 @@ function GameMenu(props: Props) {
 						);
 					}}
 				>
-					<option value="title">Title</option>
+					<option value="title">Title, Artist and User</option>
 					<option value="album">Album</option>
 					<option value="both">Title & Artist</option>
 					<option value="artist">Artist</option>

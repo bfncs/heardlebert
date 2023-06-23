@@ -363,7 +363,8 @@ function Game(props: Props) {
 						<>
 							{sortedTracks.map((track) => (
 								<option key={track.uri}>
-									`{track.title}` by {track.artists.join(", ")}
+									`{track.title}` - {track.artists.join(", ")} added by{" "}
+									{usernames.get(track.addedBy)}
 								</option>
 							))}
 						</>
