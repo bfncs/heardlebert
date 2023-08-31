@@ -83,6 +83,7 @@ function GameMenu(props: Props) {
 				}
 				usersInGame.push(song.addedBy);
 				songs.push(song);
+				playlist.tracks.splice(playlist.tracks.indexOf(song), 1);
 			}
 		} else {
 			songs.push(...playlist.tracks.slice(0, songSize));

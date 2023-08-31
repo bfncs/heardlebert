@@ -217,9 +217,9 @@ function getAllUsersPlaylist(
 			// set loading to true before calling API
 			setLoadUserPlaylists(true);
 			/*fetchUsersplaylist(userIds).then((response) => {
-				setUserPlaylists(response);
-				setLoadUserPlaylists(false);
-			});*/
+                setUserPlaylists(response);
+                setLoadUserPlaylists(false);
+            });*/
 			// ACHTUNG !!!! API LIMIT SPOTIFY
 
 			// switch loading to false after fetch is complete
@@ -630,38 +630,7 @@ function Game(props: Props) {
 							</p>
 						</div>
 					);
-				case "user":
-					return (
-						<div className={classes.lastSolution}>
-							<p>
-								The User of the last Track was{" "}
-								<b>{usernames.get(state.solution!.addedBy)}</b> and the Title
-								was <b>{state.solution!.title}</b> from{" "}
-								<b>{state.solution!.artists.join(" & ")}</b>
-							</p>
-						</div>
-					);
-				case "artist":
-					return (
-						<div className={classes.lastSolution}>
-							<p>
-								The Artist of the last Track was{" "}
-								<b>{state.solution!.artists.join(" & ")}</b> added by{" "}
-								{usernames.get(state.solution!.addedBy)}
-							</p>
-						</div>
-					);
-				case "title":
-					return (
-						<div className={classes.lastSolution}>
-							<p>
-								The Title of the last Track was <b>{state.solution!.title}</b>{" "}
-								added by {usernames.get(state.solution!.addedBy)}
-							</p>
-						</div>
-					);
-
-				case "both":
+				default:
 					return (
 						<div className={classes.lastSolution}>
 							<p>
