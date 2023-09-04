@@ -90,6 +90,7 @@ function GameMenu(props: Props) {
 		}
 
 		props.setSongs(songs);
+		playlist.tracks.push(...songs);
 		props.setAllSongs(playlist.tracks);
 		props.setUsernames([...new Set(uniqueUsers)]);
 		navigate("/game");
