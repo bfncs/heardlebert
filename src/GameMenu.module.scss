@@ -99,6 +99,30 @@
     justify-content: space-between;
 }
 
+.usernames {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.checkbox {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+
+  input {
+    margin-right: 6px;
+  }
+}
+
+.allUsers {
+  width: 100%
+}
+
 .notChangePlaylist {
     width: 100%;
     display: flex;

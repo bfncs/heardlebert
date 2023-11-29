@@ -25,7 +25,7 @@ export const initialState: GameState = {
 	currentSong: 0,
 	score: 0,
 	playlistName: "",
-	numberOfSkips: 8,
+	numberOfSkips: null,
 	usernames: [],
 };
 

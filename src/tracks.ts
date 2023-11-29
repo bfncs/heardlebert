@@ -3,7 +3,7 @@ export interface Track {
 	artists: string[];
 	title: string;
 	album: string;
-
+	popularity: number;
 	addedBy: string;
 	id: string;
 }

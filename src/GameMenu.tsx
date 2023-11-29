@@ -54,6 +54,9 @@ function GameMenu(props: Props) {
 	const [uniqueUsers, setUniqueUsers] = useState<string[]>([]);
 	const [shouldChooseEvenlyFromUsers, setShouldChooseEvenlyFromUsers] =
 		useState(false);
+	const [selectedUsernames, setSelectedUsernames] = useState<string[]>([]);
+	const [usernames, setUsernames] = useState(new Map<string, string>());
+	const [loadUsernames, setLoadUsernames] = useState(true);
 
 	const navigate = useNavigate();
 	const gameState = useAppSelector((state) => state.gameState);
@@ -74,10 +77,17 @@ function GameMenu(props: Props) {
 			for (let i = 0; i < songSize; i++) {
 				const song =
 					playlist.tracks[randomInteger(0, playlist.tracks.length - 1)];
-				if (usersInGame.length === uniqueUsers.length) {
+				if (
+					usersInGame.length === uniqueUsers.length ||
+					usersInGame.length === selectedUsernames.length
+				) {
 					usersInGame = [];
 				}
-				if (usersInGame.includes(song.addedBy)) {
+				if (
+					usersInGame.includes(song.addedBy) ||
+					(selectedUsernames.length > 0 &&
+						!selectedUsernames.includes(usernames.get(song.addedBy) || ""))
+				) {
 					i--;
 					continue;
 				}
@@ -91,7 +101,7 @@ function GameMenu(props: Props) {
 
 		props.setSongs(songs);
 		playlist.tracks.push(...songs);
-		props.setAllSongs(playlist.tracks);
+		props.setAllSongs(shuffle(playlist.tracks));
 		props.setUsernames([...new Set(uniqueUsers)]);
 		navigate("/game");
 	}
@@ -100,7 +110,7 @@ function GameMenu(props: Props) {
 		const standardPlaylistId =
 			localStorage.getItem("playlistId") || "37i9dQZF1DX4o1oenSJRJd";
 		(async () => {
-			setPlaylistId(
+			await setPlaylistId(
 				standardPlaylistId,
 				localStorage.getItem("playlistId") === null
 			);
@@ -119,6 +129,21 @@ function GameMenu(props: Props) {
 				playlist.tracks.map((track) => track.addedBy)
 			);
 			setUniqueUsers(Array.from(uniqueUsers));
+			setLoadUsernames(true);
+			try {
+				await fetchUsernames(Array.from(uniqueUsers)).then((response) => {
+					setUsernames(response);
+					setLoadUsernames(false);
+				});
+
+				// switch loading to false after fetch is complete
+				setLoadUsernames(false);
+			} catch (error) {
+				// add error handling here
+				setLoadUsernames(false);
+				console.log(error);
+			}
+
 			setChangePlaylist(false);
 		}
 		setPlaylistIsLoading(false);
@@ -234,6 +259,36 @@ function GameMenu(props: Props) {
 					}}
 				/>
 			</div>
+			{uniqueUsers.length > 1 && !loadUsernames && !changePlaylist && (
+				<div className={classes.usernames}>
+					<label>Usernames: </label>
+					<div className={classes.allUsers}>
+						{uniqueUsers.map((user) => (
+							<div className={classes.checkbox} key={"div-" + user}>
+								<input
+									type="checkbox"
+									key={"checkbox-" + user}
+									onChange={(e) => {
+										const username = usernames.get(user);
+										if (username === undefined) {
+											return;
+										}
+
+										if (e.target.checked) {
+											setSelectedUsernames([...selectedUsernames, username]);
+										} else {
+											setSelectedUsernames(
+												selectedUsernames.filter((u) => u !== username)
+											);
+										}
+									}}
+								/>
+								<label key={user}>{usernames.get(user)}</label>
+							</div>
+						))}
+					</div>
+				</div>
+			)}
 			<div className={classes.equalDistribution}>
 				<label>Equal distribution: </label>
 				<input

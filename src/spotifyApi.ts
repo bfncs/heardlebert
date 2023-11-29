@@ -183,6 +183,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 					album: {
 						name: string;
 					};
+					popularity: number;
 				};
 			}[];
 			next: string;
@@ -201,6 +202,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 			album: item.track.album.name,
 			addedBy: item.added_by.id,
 			id: item.track.id,
+			popularity: item.track.popularity,
 		})),
 	};
 
@@ -229,6 +231,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 					album: {
 						name: string;
 					};
+					popularity: number;
 				};
 			}[];
 			next: string;
@@ -256,11 +259,17 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 					album: item.track.album.name,
 					addedBy: item.added_by.id,
 					id: item.track.id,
+					popularity: item.track.popularity,
 				}))
 			);
 		}
 	}
 
 	localStorage.setItem(playlistId, JSON.stringify(playlist));
+	console.log(
+		playlist.tracks
+			.sort((a, b) => a.popularity - b.popularity)
+			.map((track) => track.title + "" + track.popularity)
+	);
 	return playlist;
 }
