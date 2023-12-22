@@ -95,7 +95,7 @@ function GameMenu(props: Props) {
 	const [changePlaylist, setChangePlaylist] = useState(false);
 	const [uniqueUsers, setUniqueUsers] = useState<string[]>([]);
 	const [shouldChooseEvenlyFromUsers, setShouldChooseEvenlyFromUsers] =
-		useState(false);
+		useState(true);
 	const [selectedUsernames, setSelectedUsernames] = useState<string[]>([]);
 	const [usernames, setUsernames] = useState(new Map<string, string>());
 	const [loadUsernames, setLoadUsernames] = useState(true);
@@ -285,45 +285,47 @@ function GameMenu(props: Props) {
 				/>
 			</div>
 			{uniqueUsers.length > 1 && !loadUsernames && !changePlaylist && (
-				<div className={classes.usernames}>
-					<label>Usernames: </label>
-					<div className={classes.allUsers}>
-						{uniqueUsers.map((user) => (
-							<div className={classes.checkbox} key={"div-" + user}>
-								<input
-									type="checkbox"
-									key={"checkbox-" + user}
-									onChange={(e) => {
-										const username = usernames.get(user);
-										if (username === undefined) {
-											return;
-										}
+				<>
+					<div className={classes.usernames}>
+						<label>Usernames: </label>
+						<div className={classes.allUsers}>
+							{uniqueUsers.map((user) => (
+								<div className={classes.checkbox} key={"div-" + user}>
+									<input
+										type="checkbox"
+										key={"checkbox-" + user}
+										onChange={(e) => {
+											const username = usernames.get(user);
+											if (username === undefined) {
+												return;
+											}
 
-										if (e.target.checked) {
-											setSelectedUsernames([...selectedUsernames, username]);
-										} else {
-											setSelectedUsernames(
-												selectedUsernames.filter((u) => u !== username)
-											);
-										}
-									}}
-								/>
-								<label key={user}>{usernames.get(user)}</label>
-							</div>
-						))}
+											if (e.target.checked) {
+												setSelectedUsernames([...selectedUsernames, username]);
+											} else {
+												setSelectedUsernames(
+													selectedUsernames.filter((u) => u !== username)
+												);
+											}
+										}}
+									/>
+									<label key={user}>{usernames.get(user)}</label>
+								</div>
+							))}
+						</div>
 					</div>
-				</div>
+					<div className={classes.equalDistribution}>
+						<label>Equal distribution: </label>
+						<input
+							type="checkbox"
+							checked={shouldChooseEvenlyFromUsers}
+							onChange={(event) => {
+								setShouldChooseEvenlyFromUsers(event.target.checked);
+							}}
+						/>
+					</div>
+				</>
 			)}
-			<div className={classes.equalDistribution}>
-				<label>Equal distribution: </label>
-				<input
-					type="checkbox"
-					checked={shouldChooseEvenlyFromUsers}
-					onChange={(event) => {
-						setShouldChooseEvenlyFromUsers(event.target.checked);
-					}}
-				/>
-			</div>
 
 			{!playlistIsLoading && (
 				<button

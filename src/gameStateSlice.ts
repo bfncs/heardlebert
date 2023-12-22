@@ -17,7 +17,7 @@ export interface GameState {
 }
 
 export const initialState: GameState = {
-	level: "easy",
+	level: "hard",
 	gameMode: "both",
 	songSize: 10,
 	songs: [],
