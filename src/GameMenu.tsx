@@ -61,7 +61,7 @@ const mapDispatchToProps = {
 
 type Props = typeof mapDispatchToProps;
 
-function useUrlPlaylistId() {
+function useUrlPlaylistId(): [string | null, (nextId: string) => void] {
 	const navigate = useNavigate();
 	const { playListId: playlistId } = useParams();
 
@@ -78,7 +78,8 @@ function useUrlPlaylistId() {
 			setPlaylistId(initialPlaylistId);
 		}
 	}, [playlistId]);
-	return [playlistId, setPlaylistId];
+
+	return [playlistId || null, setPlaylistId];
 }
 
 function GameMenu(props: Props) {
@@ -144,7 +145,9 @@ function GameMenu(props: Props) {
 	}
 
 	useEffect(() => {
-		if (playlistId) updatePlaylist(playlistId);
+		if (playlistId) {
+			updatePlaylist(playlistId);
+		}
 	}, [playlistId]);
 
 	async function updatePlaylist(playlistId: string) {
