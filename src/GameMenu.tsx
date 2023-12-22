@@ -20,6 +20,7 @@ import PlaylistSelector from "./PlaylistSelector";
 
 const STANDARD_PLAYLISTS = [
 	{ id: "0alpnkjV6cDmzJRxts58u5", title: "Metropolis" },
+	{ id: "37i9dQZF1DX5Ejj0EkURtP", title: "All Out 2010s" },
 	{ id: "37i9dQZF1DX4o1oenSJRJd", title: "All Out 2000s" },
 	{ id: "37i9dQZF1DXbTxeAdrVG2l", title: "All Out 90s" },
 	{ id: "37i9dQZF1DX4UtSsGT1Sbe", title: "All Out 80s" },
