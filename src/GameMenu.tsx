@@ -36,8 +36,8 @@ const STANDARD_PLAYLISTS = [
 	{ id: "37i9dQZF1DX6R7QUWePReA", title: "Christmas Classics" },
 ];
 
-const STANDARD_PLAYLIST_ID = STANDARD_PLAYLISTS[0].title;
-const LOCALSTORAGE_KEY_LAST_PLAYLIST_ID = "lastPlaylistId";
+const STANDARD_PLAYLIST_ID = STANDARD_PLAYLISTS[0].id;
+const LOCALSTORAGE_KEY_LAST_PLAYLIST_ID = "currentPlaylistId";
 
 function shuffle<T>(arr: T[]): T[] {
 	let j, x, i;
