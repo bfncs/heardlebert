@@ -17,7 +17,6 @@ const PlaylistSelector = ({ defaultPlaylists, onPlaylistSelected }: Props) => {
 				<select
 					value={selectValue}
 					onChange={(event) => {
-						console.log(event.target.value);
 						setSelectValue(event.target.value);
 					}}
 				>
