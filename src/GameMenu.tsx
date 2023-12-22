@@ -14,7 +14,7 @@ import {
 	setSongSize,
 	setUsernames,
 } from "./gameStateSlice";
-import { Spinner } from "@blueprintjs/core";
+import Spinner from "./Spinner";
 import { Track } from "./tracks";
 import PlaylistSelector from "./PlaylistSelector";
 

@@ -2,7 +2,7 @@ import SpotifyPlayer from "./SpotifyPlayer";
 import React, { SyntheticEvent, useEffect, useMemo, useState } from "react";
 import { Track } from "./tracks";
 import classes from "./Game.module.scss";
-import { Spinner } from "@blueprintjs/core";
+import Spinner from "./Spinner";
 import { Simulate } from "react-dom/test-utils";
 import { useAppSelector } from "./hook";
 import { useNavigate } from "react-router-dom";
