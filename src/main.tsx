@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import Snowfall from "react-snowfall";
 import "./index.scss";
 import App from "./App";
 import { Provider } from "react-redux";
@@ -13,11 +14,14 @@ declare global {
 
 window.onSpotifyIframeApiReady = window.onSpotifyIframeApiReady || {};
 
+const isBeginningToLookALotLikeChristmas = new Date().getMonth() === 11;
+
 window.onSpotifyIframeApiReady = (spotifyIframeApi) => {
 	ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 		<React.StrictMode>
 			<Provider store={store}>
 				<App spotifyIframeApi={spotifyIframeApi} />
+				{isBeginningToLookALotLikeChristmas && <Snowfall />}
 			</Provider>
 		</React.StrictMode>
 	);
