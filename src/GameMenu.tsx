@@ -32,6 +32,8 @@ const STANDARD_PLAYLISTS = [
 	{ id: "37i9dQZF1DWWMOmoXKqHTD", title: "Songs To Sing to in the Car" },
 	{ id: "37i9dQZF1DWSqmBTGDYngZ", title: "Songs To Sing in the Shower" },
 	{ id: "37i9dQZF1DX186v583rmzp", title: "I Love My 90s HipHop" },
+	{ id: "37i9dQZF1DX1LCddwjCqDK", title: "Weihnachtsklassiker" },
+	{ id: "37i9dQZF1DX6R7QUWePReA", title: "Christmas Classics" },
 ];
 
 const STANDARD_PLAYLIST_ID = STANDARD_PLAYLISTS[0].title;
