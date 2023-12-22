@@ -1,28 +1,40 @@
 import React, { useEffect, useState } from "react";
-import {
-	fetchAlbumImage,
-	fetchPlaylist,
-	fetchUsernames,
-	Playlist,
-} from "./spotifyApi";
+import { fetchPlaylist, fetchUsernames, Playlist } from "./spotifyApi";
 import classes from "./GameMenu.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppSelector } from "./hook";
 import { connect } from "react-redux";
 import {
+	setAllSongs,
 	setGameMode,
 	setLevel,
+	setNumberOfSkips,
+	setPlaylistName,
 	setSongs,
 	setSongSize,
-	setAllSongs,
-	setPlaylistName,
-	setNumberOfSkips,
 	setUsernames,
 } from "./gameStateSlice";
 import { Spinner } from "@blueprintjs/core";
 import { Track } from "./tracks";
+import PlaylistSelector from "./PlaylistSelector";
 
-const STANDARD_PLAYLIST_ID = "37i9dQZF1DX4o1oenSJRJd";
+const STANDARD_PLAYLISTS = [
+	{ id: "0alpnkjV6cDmzJRxts58u5", title: "Metropolis" },
+	{ id: "37i9dQZF1DX4o1oenSJRJd", title: "All Out 2000s" },
+	{ id: "37i9dQZF1DXbTxeAdrVG2l", title: "All Out 90s" },
+	{ id: "37i9dQZF1DX4UtSsGT1Sbe", title: "All Out 80s" },
+	{ id: "37i9dQZF1DWTJ7xPn4vNaz", title: "All Out 70s" },
+	{ id: "37i9dQZF1DXaKIA8E7WcJj", title: "All Out 60s" },
+	{ id: "37i9dQZF1DXcBWIGoYBM5M", title: "Today's Top Hits" },
+	{ id: "37i9dQZEVXbMDoHDwVN2tF", title: "Top 50 Global" },
+	{ id: "37i9dQZF1DX0XUsuxWHRQd", title: "Rap Caviar" },
+	{ id: "37i9dQZF1DWXRqgorJj26U", title: "Rock Caviar" },
+	{ id: "37i9dQZF1DWWMOmoXKqHTD", title: "Songs To Sing to in the Car" },
+	{ id: "37i9dQZF1DWSqmBTGDYngZ", title: "Songs To Sing in the Shower" },
+	{ id: "37i9dQZF1DX186v583rmzp", title: "I Love My 90s HipHop" },
+];
+
+const STANDARD_PLAYLIST_ID = STANDARD_PLAYLISTS[0].title;
 const LOCALSTORAGE_KEY_LAST_PLAYLIST_ID = "lastPlaylistId";
 
 function shuffle<T>(arr: T[]): T[] {
@@ -170,39 +182,18 @@ function GameMenu(props: Props) {
 		setPlaylistIsLoading(false);
 	}
 
-	function getChangePlaylist() {
-		return (
-			<div className={classes.changePlaylist}>
-				{!playlistIsLoading ? (
-					<>
-						<input
-							type="text"
-							value={inputValue}
-							onChange={(event) => setInputValue(event.target.value)}
-						/>
-						<button
-							onClick={() => {
-								setPlaylistId(inputValue);
-								setChangePlaylist(false);
-							}}
-						>
-							Set Playlist
-						</button>
-					</>
-				) : (
-					<Spinner />
-				)}
-			</div>
-		);
-	}
-
 	return (
 		<div className={classes.containerMenu}>
 			<div className={classes.playlist}>
 				{!changePlaylist ? (
 					<div className={classes.notChangePlaylist}>
 						<h3>
-							Playlist: <b>{playlist?.name}</b>
+							Playlist:{" "}
+							<b>
+								{playlist
+									? `${playlist.name} (${playlist.tracks.length}🎵)`
+									: ""}
+							</b>
 						</h3>
 						<button
 							onClick={() => {
@@ -212,8 +203,16 @@ function GameMenu(props: Props) {
 							Change
 						</button>
 					</div>
+				) : playlistIsLoading ? (
+					<Spinner />
 				) : (
-					getChangePlaylist()
+					<PlaylistSelector
+						defaultPlaylists={STANDARD_PLAYLISTS}
+						onPlaylistSelected={(id) => {
+							setPlaylistId(id);
+							setChangePlaylist(false);
+						}}
+					/>
 				)}
 			</div>
 			<div className={classes.gamemode}>
