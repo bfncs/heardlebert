@@ -19,7 +19,7 @@ function App(props: Props) {
 			<div className={classes.appBody}>
 				<Router>
 					<Routes>
-						<Route path="/" element={<GameMenu />} />
+						<Route path="/:playListId?" element={<GameMenu />} />
 						<Route
 							path="/game"
 							element={<Game spotifyIframeApi={props.spotifyIframeApi} />}

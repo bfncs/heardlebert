@@ -135,8 +135,9 @@ export async function fetchUsernames(
 			},
 		});
 		if (response.status !== 200) {
+			console.log(userIds, response);
 			throw new Error(
-				`Unable to fetch playlist (${response.status}): ${response.body}`
+				`Unable to fetch usernames (${response.status}): ${response.body}`
 			);
 		}
 		let payload: {

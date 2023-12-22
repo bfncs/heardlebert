@@ -6,7 +6,7 @@ import {
 	Playlist,
 } from "./spotifyApi";
 import classes from "./GameMenu.module.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppSelector } from "./hook";
 import { connect } from "react-redux";
 import {
@@ -21,6 +21,9 @@ import {
 } from "./gameStateSlice";
 import { Spinner } from "@blueprintjs/core";
 import { Track } from "./tracks";
+
+const STANDARD_PLAYLIST_ID = "37i9dQZF1DX4o1oenSJRJd";
+const LOCALSTORAGE_KEY_LAST_PLAYLIST_ID = "lastPlaylistId";
 
 function shuffle<T>(arr: T[]): T[] {
 	let j, x, i;
@@ -46,7 +49,30 @@ const mapDispatchToProps = {
 
 type Props = typeof mapDispatchToProps;
 
+function useUrlPlaylistId() {
+	const navigate = useNavigate();
+	const { playListId: playlistId } = useParams();
+
+	function setPlaylistId(id: string) {
+		navigate("/" + id);
+	}
+
+	useEffect(() => {
+		if (!playlistId) {
+			const lastPlaylistId = localStorage.getItem(
+				LOCALSTORAGE_KEY_LAST_PLAYLIST_ID
+			);
+			const initialPlaylistId = lastPlaylistId || STANDARD_PLAYLIST_ID;
+			setPlaylistId(initialPlaylistId);
+		}
+	}, [playlistId]);
+	return [playlistId, setPlaylistId];
+}
+
 function GameMenu(props: Props) {
+	const navigate = useNavigate();
+	const [playlistId, setPlaylistId] = useUrlPlaylistId();
+
 	const [playlist, setPlaylist] = useState<Playlist | null>(null);
 	const [inputValue, setInputValue] = useState("");
 	const [playlistIsLoading, setPlaylistIsLoading] = useState(true);
@@ -58,7 +84,6 @@ function GameMenu(props: Props) {
 	const [usernames, setUsernames] = useState(new Map<string, string>());
 	const [loadUsernames, setLoadUsernames] = useState(true);
 
-	const navigate = useNavigate();
 	const gameState = useAppSelector((state) => state.gameState);
 
 	function randomInteger(min: number, max: number) {
@@ -107,26 +132,24 @@ function GameMenu(props: Props) {
 	}
 
 	useEffect(() => {
-		const standardPlaylistId =
-			localStorage.getItem("playlistId") || "37i9dQZF1DX4o1oenSJRJd";
-		(async () => {
-			await setPlaylistId(
-				standardPlaylistId,
-				localStorage.getItem("playlistId") === null
-			);
-		})();
-	}, []);
+		if (playlistId) updatePlaylist(playlistId);
+	}, [playlistId]);
 
-	async function setPlaylistId(playlistId: string, isStandard = false) {
+	async function updatePlaylist(playlistId: string) {
 		setPlaylistIsLoading(true);
 		const playlist = await fetchPlaylist(playlistId);
 		setPlaylist({ ...playlist, tracks: shuffle(playlist.tracks) });
 		props.setPlaylistName(playlist.name);
 
-		localStorage.setItem("playlistId", playlistId);
-		if (!isStandard) {
+		const isStandard = playlistId === STANDARD_PLAYLIST_ID;
+		if (isStandard) {
+			localStorage.removeItem(LOCALSTORAGE_KEY_LAST_PLAYLIST_ID);
+		} else {
+			localStorage.setItem(LOCALSTORAGE_KEY_LAST_PLAYLIST_ID, playlistId);
 			const uniqueUsers = new Set(
-				playlist.tracks.map((track) => track.addedBy)
+				playlist.tracks
+					.flatMap((track) => track.addedBy)
+					.filter((user) => !!user)
 			);
 			setUniqueUsers(Array.from(uniqueUsers));
 			setLoadUsernames(true);
@@ -141,10 +164,8 @@ function GameMenu(props: Props) {
 			} catch (error) {
 				// add error handling here
 				setLoadUsernames(false);
-				console.log(error);
+				console.error(error);
 			}
-
-			setChangePlaylist(false);
 		}
 		setPlaylistIsLoading(false);
 	}
@@ -159,7 +180,12 @@ function GameMenu(props: Props) {
 							value={inputValue}
 							onChange={(event) => setInputValue(event.target.value)}
 						/>
-						<button onClick={() => setPlaylistId(inputValue)}>
+						<button
+							onClick={() => {
+								setPlaylistId(inputValue);
+								setChangePlaylist(false);
+							}}
+						>
 							Set Playlist
 						</button>
 					</>
