@@ -159,32 +159,26 @@ function GameMenu(props: Props) {
 		setPlaylist({ ...playlist, tracks: shuffle(playlist.tracks) });
 		props.setPlaylistName(playlist.name);
 
-		const isStandard = playlistId === STANDARD_PLAYLIST_ID;
-		if (isStandard) {
-			localStorage.removeItem(LOCALSTORAGE_KEY_LAST_PLAYLIST_ID);
-		} else {
-			localStorage.setItem(LOCALSTORAGE_KEY_LAST_PLAYLIST_ID, playlistId);
-			const uniqueUsers = new Set(
-				playlist.tracks
-					.flatMap((track) => track.addedBy)
-					.filter((user) => !!user)
-			);
-			setUniqueUsers(Array.from(uniqueUsers));
-			setLoadUsernames(true);
-			try {
-				await fetchUsernames(Array.from(uniqueUsers)).then((response) => {
-					setUsernames(response);
-					setLoadUsernames(false);
-				});
+		localStorage.setItem(LOCALSTORAGE_KEY_LAST_PLAYLIST_ID, playlistId);
+		const uniqueUsers = new Set(
+			playlist.tracks.flatMap((track) => track.addedBy).filter((user) => !!user)
+		);
+		setUniqueUsers(Array.from(uniqueUsers));
+		setLoadUsernames(true);
+		try {
+			await fetchUsernames(Array.from(uniqueUsers)).then((response) => {
+				setUsernames(response);
+				setLoadUsernames(false);
+			});
 
-				// switch loading to false after fetch is complete
-				setLoadUsernames(false);
-			} catch (error) {
-				// add error handling here
-				setLoadUsernames(false);
-				console.error(error);
-			}
+			// switch loading to false after fetch is complete
+			setLoadUsernames(false);
+		} catch (error) {
+			// add error handling here
+			setLoadUsernames(false);
+			console.error(error);
 		}
+
 		setPlaylistIsLoading(false);
 	}
 
