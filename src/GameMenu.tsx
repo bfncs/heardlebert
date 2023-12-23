@@ -90,7 +90,6 @@ function GameMenu(props: Props) {
 	const [playlistId, setPlaylistId] = useUrlPlaylistId();
 
 	const [playlist, setPlaylist] = useState<Playlist | null>(null);
-	const [inputValue, setInputValue] = useState("");
 	const [playlistIsLoading, setPlaylistIsLoading] = useState(true);
 	const [changePlaylist, setChangePlaylist] = useState(false);
 	const [uniqueUsers, setUniqueUsers] = useState<string[]>([]);
