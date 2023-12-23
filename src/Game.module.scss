@@ -3,9 +3,9 @@
 	font-size: 24px;
 	color: #666666;
 	line-height: 1.5;
-	border: 3px solid #E6E6E6;
+	border: 3px solid #e6e6e6;
 	border-radius: 8px;
-	height:48px;
+	height: 48px;
 	padding: 9px 32px;
 
 	@media (max-width: 400px) {
@@ -48,8 +48,6 @@
 	}
 }
 
-
-
 .formRow {
 	display: flex;
 	flex-direction: row;
@@ -76,7 +74,6 @@ button {
 	max-height: 250px;
 }
 
-
 .endGameDiv {
 	display: flex;
 	flex-direction: column;
@@ -95,21 +92,21 @@ button {
 	p {
 		font-size: 36px;
 		line-height: 1.5;
-		color: #6951FF;
+		color: #6951ff;
 		font-weight: 600;
 	}
 }
 
 .backToMenu {
-	background: #FFFFFF;
-	border: 3px solid #6951FF;
-	color: #6951FF;
+	background: #ffffff;
+	border: 3px solid #6951ff;
+	color: #6951ff;
 	width: 185px;
 
 	&:hover {
 		background: #1700a8;
 		border-color: #1700a8;
-		color: #FFFFFF;
+		color: #ffffff;
 	}
 
 	&:disabled {
@@ -129,14 +126,14 @@ button {
 	gap: 25px;
 
 	.hearMore {
-		background: #FFFFFF;
-		border: 3px solid #6951FF;
-		color: #6951FF;
+		background: #ffffff;
+		border: 3px solid #6951ff;
+		color: #6951ff;
 
 		&:hover {
 			background: #1700a8;
 			border-color: #1700a8;
-			color: #FFFFFF;
+			color: #ffffff;
 		}
 
 		&:disabled {
@@ -144,20 +141,18 @@ button {
 			background: lightgrey;
 			border-color: darkgrey;
 			cursor: not-allowed;
-	}
-
+		}
 	}
 
 	.submit {
-		background: #6951FF;
-		border: 3px solid #6951FF;
-		color: #FFFFFF;
+		background: #6951ff;
+		border: 3px solid #6951ff;
+		color: #ffffff;
 
 		&:hover {
 			background: #1700a8;
 			border: 3px solid #1700a8;
 		}
-
 	}
 }
 
@@ -169,11 +164,10 @@ button {
 	overflow-x: hidden;
 	padding: 0 24px;
 	gap: 16px;
-	border: 3px solid #E6E6E6;
+	border: 3px solid #e6e6e6;
 	border-radius: 8px;
 	list-style-type: none;
 	font-size: 24px;
-
 
 	@media (max-width: 400px) {
 		font-size: 16px;
@@ -188,10 +182,10 @@ button {
 .nextTrack {
 	display: block;
 	margin-top: 10px;
-	background: #FFFFFF;
-	border: 3px solid #6951FF;
+	background: #ffffff;
+	border: 3px solid #6951ff;
 	border-radius: 8px;
-	color: #6951FF;
+	color: #6951ff;
 	height: 48px;
 	width: auto;
 	font-size: 24px;
@@ -204,12 +198,10 @@ button {
 	&:hover {
 		background: #1700a8;
 		border: 3px solid #1700a8;
-		color: #FFFFFF;
+		color: #ffffff;
 	}
 }
 
 .gameForm {
 	margin-top: 15px;
 }
-
-

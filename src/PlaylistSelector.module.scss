@@ -1,13 +1,14 @@
 .wrapper {
-  select, input {
-    width: 100%;
-    padding: .2em;
-    margin: 0 0 1em;
-  }
-  button {
-    font-size: 16px;
-    font-weight: 600;
-    height: 36px;
-    width: 155px;
-  }
+	select,
+	input {
+		width: 100%;
+		padding: 0.2em;
+		margin: 0 0 1em;
+	}
+	button {
+		font-size: 16px;
+		font-weight: 600;
+		height: 36px;
+		width: 155px;
+	}
 }

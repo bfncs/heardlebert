@@ -32,7 +32,7 @@
 	width: 100%;
 	height: 100%;
 	transform-origin: top left;
-	transition: transform .1s;
+	transition: transform 0.1s;
 }
 
 .stopAfterBar {
@@ -41,7 +41,7 @@
 
 .progressBar {
 	z-index: 1;
-	background: #1700a8 ;
+	background: #1700a8;
 }
 
 .progressTick {
@@ -70,13 +70,13 @@
 	transition-duration: 0.15s;
 	transition-property: background-image;
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-	background-image: url('assets/icon-play_button_circle-blue-line-default-24.svg');
+	background-image: url("assets/icon-play_button_circle-blue-line-default-24.svg");
 
 	width: 48px;
 	height: 48px;
 	&:hover {
-		background-image: url('assets/icon-play_button_circle-dark-line-default-24.svg');
-	 }
+		background-image: url("assets/icon-play_button_circle-dark-line-default-24.svg");
+	}
 }
 
 .pauseButton {
@@ -92,13 +92,12 @@
 	transition-duration: 0.15s;
 	transition-property: background-image;
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-	background-image: url('assets/icon-pause_button_circle-blue-line-default-24.svg');
+	background-image: url("assets/icon-pause_button_circle-blue-line-default-24.svg");
 
 	width: 48px;
 	height: 48px;
 	&:hover {
-		background-image: url('assets/icon-pause_button_circle-dark-line-default-24.svg');
-
+		background-image: url("assets/icon-pause_button_circle-dark-line-default-24.svg");
 	}
 }
 

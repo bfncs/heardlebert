@@ -1,138 +1,137 @@
 .containerMenu {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  row-gap: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	row-gap: 20px;
 
-  button {
-    font-size: 24px;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 8px;
-    height: 48px;
-    width: 155px;
+	button {
+		font-size: 24px;
+		font-weight: 600;
+		cursor: pointer;
+		border-radius: 8px;
+		height: 48px;
+		width: 155px;
 
+		border: 3px solid #6951ff;
+		background-color: #6951ff;
+		color: #ffffff;
 
-    border: 3px solid #6951FF;
-    background-color: #6951FF;
-    color: #FFFFFF;
+		&:hover {
+			background: #1700a8;
+			border-color: #1700a8;
+		}
 
-    &:hover {
-      background: #1700a8;
-      border-color: #1700a8;
-    }
+		&:disabled {
+			color: #000000;
+			background: lightgrey;
+			border-color: darkgrey;
+			cursor: not-allowed;
+		}
 
-    &:disabled {
-      color: #000000;
-      background: lightgrey;
-      border-color: darkgrey;
-      cursor: not-allowed;
-    }
+		@media (max-width: 400px) {
+			font-size: 16px;
+		}
+	}
 
-    @media (max-width: 400px) {
-      font-size: 16px;
-    }
-  }
+	select {
+		width: 50%;
+		border: none;
+		font-weight: bold;
+		text-decoration: underline;
+		color: #6951ff;
+	}
 
-  select {
-    width: 50%;
-    border: none;
-    font-weight: bold;
-    text-decoration: underline;
-    color: #6951FF;
-  }
-
-  label {
-    width: 50%;
-  }
+	label {
+		width: 50%;
+	}
 }
 
 .playlist {
-  width: 100%;
-  display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    row-gap: 20px;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	row-gap: 20px;
 }
 
 .gamemode {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .difficulty {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .songSize {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .numberOfSkips {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .equalDistribution {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .usernames {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .checkbox {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-end;
 
-  input {
-    margin-right: 6px;
-  }
+	input {
+		margin-right: 6px;
+	}
 }
 
 .allUsers {
-  width: 100%
+	width: 100%;
 }
 
 .notChangePlaylist {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
 
-  button {
-    font-size: 16px;
-    font-weight: 600;
-    height: 36px;
-    width: 155px;
-  }
+	button {
+		font-size: 16px;
+		font-weight: 600;
+		height: 36px;
+		width: 155px;
+	}
 }
