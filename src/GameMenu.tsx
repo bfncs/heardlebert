@@ -326,8 +326,9 @@ function GameMenu(props: Props) {
 					</div>
 				</>
 			)}
-
-			{!playlistIsLoading && (
+			{playlistIsLoading ? (
+				<Spinner />
+			) : (
 				<button
 					onClick={() => {
 						startGame();
