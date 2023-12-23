@@ -29,7 +29,7 @@ const STANDARD_PLAYLISTS = [
 	{ id: "37i9dQZF1DXcBWIGoYBM5M", title: "Today's Top Hits" },
 	{ id: "37i9dQZEVXbMDoHDwVN2tF", title: "Top 50 Global" },
 	{ id: "37i9dQZF1DX0XUsuxWHRQd", title: "Rap Caviar" },
-	{ id: "37i9dQZF1DWXRqgorJj26U", title: "Rock Caviar" },
+	{ id: "37i9dQZF1DWXRqgorJj26U", title: "Rock Classics" },
 	{ id: "37i9dQZF1DWWMOmoXKqHTD", title: "Songs To Sing to in the Car" },
 	{ id: "37i9dQZF1DWSqmBTGDYngZ", title: "Songs To Sing in the Shower" },
 	{ id: "37i9dQZF1DX186v583rmzp", title: "I Love My 90s HipHop" },
