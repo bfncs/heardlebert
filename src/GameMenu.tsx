@@ -75,7 +75,7 @@ function useUrlPlaylistId(): [string | null, (nextId: string) => void] {
 	useEffect(() => {
 		if (!playlistId) {
 			const lastPlaylistId = localStorage.getItem(
-				LOCALSTORAGE_KEY_LAST_PLAYLIST_ID
+				LOCALSTORAGE_KEY_LAST_PLAYLIST_ID,
 			);
 			const initialPlaylistId = lastPlaylistId || STANDARD_PLAYLIST_ID;
 			setPlaylistId(initialPlaylistId);
@@ -160,7 +160,9 @@ function GameMenu(props: Props) {
 
 		localStorage.setItem(LOCALSTORAGE_KEY_LAST_PLAYLIST_ID, playlistId);
 		const uniqueUsers = new Set(
-			playlist.tracks.flatMap((track) => track.addedBy).filter((user) => !!user)
+			playlist.tracks
+				.flatMap((track) => track.addedBy)
+				.filter((user) => !!user),
 		);
 		setUniqueUsers(Array.from(uniqueUsers));
 		setLoadUsernames(true);
@@ -226,6 +228,7 @@ function GameMenu(props: Props) {
 								| "both"
 								| "artist"
 								| "user"
+								| "year",
 						);
 					}}
 				>
@@ -234,6 +237,7 @@ function GameMenu(props: Props) {
 					<option value="both">Title & Artist</option>
 					<option value="artist">Artist</option>
 					<option value="user">User</option>
+					<option value="year">Year</option>
 				</select>{" "}
 			</div>
 			<div className={classes.difficulty}>
@@ -256,8 +260,8 @@ function GameMenu(props: Props) {
 					onChange={(event) => {
 						props.setSongSize(
 							Number.parseInt(
-								event.target.value as "5" | "10" | "20" | "30" | "40" | "50"
-							)
+								event.target.value as "5" | "10" | "20" | "30" | "40" | "50",
+							),
 						);
 					}}
 				>
@@ -278,7 +282,7 @@ function GameMenu(props: Props) {
 						props.setNumberOfSkips(
 							event.target.value.trim() !== ""
 								? Number.parseInt(event.target.value)
-								: null
+								: null,
 						);
 					}}
 				/>
@@ -303,7 +307,7 @@ function GameMenu(props: Props) {
 												setSelectedUsernames([...selectedUsernames, username]);
 											} else {
 												setSelectedUsernames(
-													selectedUsernames.filter((u) => u !== username)
+													selectedUsernames.filter((u) => u !== username),
 												);
 											}
 										}}

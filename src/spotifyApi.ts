@@ -50,7 +50,7 @@ export async function fetchAlbumImage(trackId: string): Promise<string> {
 
 	if (response.status !== 200) {
 		throw new Error(
-			`Unable to fetch playlist (${response.status}): ${response.body}`
+			`Unable to fetch playlist (${response.status}): ${response.body}`,
 		);
 	}
 
@@ -68,7 +68,7 @@ export async function fetchAlbumImage(trackId: string): Promise<string> {
 }
 
 export async function fetchUsersplaylist(
-	userIds: string[]
+	userIds: string[],
 ): Promise<UsersPlaylist[]> {
 	const accessToken = await fetchAccessToken();
 	const playlists: UsersPlaylist[] = [];
@@ -80,12 +80,12 @@ export async function fetchUsersplaylist(
 				headers: {
 					Authorization: `Bearer ${accessToken}`,
 				},
-			}
+			},
 		);
 
 		if (response.status !== 200) {
 			throw new Error(
-				`Unable to fetch playlist (${response.status}): ${response.body}`
+				`Unable to fetch playlist (${response.status}): ${response.body}`,
 			);
 		}
 
@@ -122,7 +122,7 @@ export async function fetchUsersplaylist(
 }
 
 export async function fetchUsernames(
-	userIds: string[]
+	userIds: string[],
 ): Promise<Map<string, string>> {
 	const accessToken = await fetchAccessToken();
 	const usernames = new Map<string, string>();
@@ -137,7 +137,7 @@ export async function fetchUsernames(
 		if (response.status !== 200) {
 			console.log(userIds, response);
 			throw new Error(
-				`Unable to fetch usernames (${response.status}): ${response.body}`
+				`Unable to fetch usernames (${response.status}): ${response.body}`,
 			);
 		}
 		let payload: {
@@ -158,12 +158,12 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 			headers: {
 				Authorization: `Bearer ${accessToken}`,
 			},
-		}
+		},
 	);
 
 	if (response.status !== 200) {
 		throw new Error(
-			`Unable to fetch playlist (${response.status}): ${response.body}`
+			`Unable to fetch playlist (${response.status}): ${response.body}`,
 		);
 	}
 	let payloadFirst: {
@@ -183,6 +183,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 					uri: string;
 					album: {
 						name: string;
+						release_date: string;
 					};
 					popularity: number;
 				};
@@ -204,6 +205,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 			addedBy: item.added_by.id,
 			id: item.track.id,
 			popularity: item.track.popularity,
+			release_date: item.track.album.release_date.split("-")[0],
 		})),
 	};
 
@@ -231,6 +233,7 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 					uri: string;
 					album: {
 						name: string;
+						release_date: string;
 					};
 					popularity: number;
 				};
@@ -261,16 +264,12 @@ export async function fetchPlaylist(playlistId: string): Promise<Playlist> {
 					addedBy: item.added_by.id,
 					id: item.track.id,
 					popularity: item.track.popularity,
-				}))
+					release_date: item.track.album.release_date.split("-")[0],
+				})),
 			);
 		}
 	}
 
 	localStorage.setItem(playlistId, JSON.stringify(playlist));
-	console.log(
-		playlist.tracks
-			.sort((a, b) => a.popularity - b.popularity)
-			.map((track) => track.title + "" + track.popularity)
-	);
 	return playlist;
 }

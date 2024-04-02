@@ -6,4 +6,5 @@ export interface Track {
 	popularity: number;
 	addedBy: string;
 	id: string;
+	release_date: string;
 }

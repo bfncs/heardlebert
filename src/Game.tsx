@@ -25,6 +25,7 @@ interface track {
 	artists: string[];
 	album: string;
 	addedBy: string;
+	release_date: string;
 }
 
 type RoundState = {
@@ -74,7 +75,7 @@ function isAlbumMatching(inputValue: string, currentTrack: Track) {
 function isUserMatching(
 	inputValue: string,
 	currentTrack: Track,
-	usernames: Map<string, string>
+	usernames: Map<string, string>,
 ) {
 	return inputValue
 		.toLowerCase()
@@ -84,8 +85,8 @@ function isUserMatching(
 function isCorrectAnswer(
 	inputValue: string,
 	currentTrack: Track,
-	gamemode: "title" | "artist" | "both" | "album" | "user" = "both",
-	usernames?: Map<string, string>
+	gamemode: "title" | "artist" | "both" | "album" | "user" | "year" = "both",
+	usernames?: Map<string, string>,
 ) {
 	switch (gamemode) {
 		case "title":
@@ -101,13 +102,16 @@ function isCorrectAnswer(
 			return isAlbumMatching(inputValue, currentTrack);
 		case "user":
 			return isUserMatching(inputValue, currentTrack, usernames!);
+		case "year":
+			return currentTrack.release_date.includes(inputValue);
 	}
 }
 
 function sortTracks(tracks: Track[]) {
 	return [...tracks].sort(
 		(a, b) =>
-			a.artists[0].localeCompare(b.artists[0]) || a.title.localeCompare(b.title)
+			a.artists[0].localeCompare(b.artists[0]) ||
+			a.title.localeCompare(b.title),
 	);
 }
 
@@ -176,8 +180,8 @@ function loadAlbumImages(
 	setAlbumImages: (
 		value:
 			| ((prevState: Map<string, string>) => Map<string, string>)
-			| Map<string, string>
-	) => void
+			| Map<string, string>,
+	) => void,
 ) {
 	// useEffect with an empty dependency array works the same way as componentDidMount
 	useEffect(() => {
@@ -202,46 +206,16 @@ function loadAlbumImages(
 	}, []);
 }
 
-function getAllUsersPlaylist(
-	setLoadUserPlaylists: (
-		value: ((prevState: boolean) => boolean) | boolean
-	) => void,
-	userIds: string[],
-	setUserPlaylists: (
-		value: ((prevState: Playlist[]) => Playlist[]) | Playlist[]
-	) => void
-) {
-	// useEffect with an empty dependency array works the same way as componentDidMount
-	useEffect(() => {
-		try {
-			// set loading to true before calling API
-			setLoadUserPlaylists(true);
-			/*fetchUsersplaylist(userIds).then((response) => {
-                setUserPlaylists(response);
-                setLoadUserPlaylists(false);
-            });*/
-			// ACHTUNG !!!! API LIMIT SPOTIFY
-
-			// switch loading to false after fetch is complete
-			setLoadUserPlaylists(false);
-		} catch (error) {
-			// add error handling here
-			setLoadUserPlaylists(false);
-			console.log(error);
-		}
-	}, []);
-}
-
 function getAllUsernames(
 	setLoadUsernames: (
-		value: ((prevState: boolean) => boolean) | boolean
+		value: ((prevState: boolean) => boolean) | boolean,
 	) => void,
 	userIds: string[],
 	setUsernames: (
 		value:
 			| ((prevState: Map<string, string>) => Map<string, string>)
-			| Map<string, string>
-	) => void
+			| Map<string, string>,
+	) => void,
 ) {
 	// useEffect with an empty dependency array works the same way as componentDidMount
 	useEffect(() => {
@@ -268,15 +242,26 @@ function Game(props: Props) {
 	const [loadingAlbum, setLoadingAlbum] = useState(true);
 	const [albumImages, setAlbumImages] = useState(new Map<string, string>());
 	const [usernames, setUsernames] = useState(new Map<string, string>());
-	const [loadUsernames, setLoadUsernames] = useState(true);
-	const [userPlaylists, setUserPlaylists] = useState<Playlist[]>([]);
-	const [loadUserPlaylists, setLoadUserPlaylists] = useState(true);
 	const gameState = useAppSelector((state) => state.gameState);
 	const navigate = useNavigate();
 
 	useEffect(() => {
 		setState(initialState);
 	}, [props]);
+
+	function deleteYearDuplicates(sortedTracks: Track[]) {
+		const result: Track[] = [];
+		for (let i = 0; i < sortedTracks.length; i++) {
+			if (
+				i === 0 ||
+				result.filter((t) => t.release_date === sortedTracks[i].release_date)
+					.length === 0
+			) {
+				result.push(sortedTracks[i]);
+			}
+		}
+		return result.sort((a, b) => a.release_date.localeCompare(b.release_date));
+	}
 
 	if (gameState == null) {
 		return <Spinner />;
@@ -289,17 +274,11 @@ function Game(props: Props) {
 		const [inputValue, setInputValue] = useState("");
 		const sortedTracks = useMemo(
 			() => deleteDuplicates(gameState.allSongs),
-			[gameState.allSongs]
+			[gameState.allSongs],
 		);
 		const currentTrack: Track = songs[state.track];
 
 		loadAlbumImages(setLoadingAlbum, songs, setAlbumImages);
-		getAllUsernames(setLoadUsernames, gameState.usernames, setUsernames);
-		getAllUsersPlaylist(
-			setLoadUserPlaylists,
-			gameState.usernames,
-			setUserPlaylists
-		);
 
 		let GUESSABLE_TRACK_LENGTHS = GUESSABLE_TRACK_LENGTHS_EASY;
 		if (level === "medium") {
@@ -316,7 +295,7 @@ function Game(props: Props) {
 				state.guesses[state.guesses.length - 1],
 				currentTrack,
 				gamemode,
-				gamemode === "user" ? usernames : undefined
+				gamemode === "user" ? usernames : undefined,
 			);
 
 		function toMenu() {
@@ -331,7 +310,7 @@ function Game(props: Props) {
 					inputValue,
 					songs[state.track],
 					gamemode,
-					gamemode === "user" ? usernames : undefined
+					gamemode === "user" ? usernames : undefined,
 				) &&
 				numberOfSkips != null
 			) {
@@ -348,7 +327,7 @@ function Game(props: Props) {
 					inputValue,
 					songs[state.track],
 					gamemode,
-					gamemode === "user" ? usernames : undefined
+					gamemode === "user" ? usernames : undefined,
 				)
 			) {
 				goToNextSong(0);
@@ -403,6 +382,14 @@ function Game(props: Props) {
 									`{track.album}` - `{track.title}` by `
 									{track.artists.join(", ")}`
 								</option>
+							))}
+						</>
+					);
+				case "year":
+					return (
+						<>
+							{deleteYearDuplicates(sortedTracks).map((track) => (
+								<option key={track.uri}>{track.release_date}</option>
 							))}
 						</>
 					);
@@ -465,7 +452,7 @@ function Game(props: Props) {
 					<>
 						{isTitleMatching(
 							state.guesses[state.guesses.length - 1],
-							currentTrack
+							currentTrack,
 						)
 							? getEverythingRightText()
 							: getJustArtistRightText()}
@@ -475,9 +462,12 @@ function Game(props: Props) {
 		}
 
 		function getPointsForGuess(
-			gamemode: "title" | "artist" | "both" | "album" | "user",
-			guessCount: number
+			gamemode: "title" | "artist" | "both" | "album" | "user" | "year",
+			guessCount: number,
 		) {
+			if (gamemode === "year") {
+				return 2000 - 50 * guessCount;
+			}
 			const gamemodePoint = gamemode === "album" ? 100 : 200;
 			return 2000 - gamemodePoint * guessCount;
 		}
@@ -515,6 +505,7 @@ function Game(props: Props) {
 					artists: currentTrack.artists,
 					album: currentTrack.album,
 					addedBy: currentTrack.addedBy,
+					release_date: currentTrack.release_date,
 				},
 			});
 		}
@@ -531,6 +522,8 @@ function Game(props: Props) {
 					return "search for user";
 				case "album":
 					return "search for album";
+				case "year":
+					return "search for year";
 			}
 		}
 
@@ -579,7 +572,7 @@ function Game(props: Props) {
 											(GUESSABLE_TRACK_LENGTHS[state.guesses.length + 1] -
 												GUESSABLE_TRACK_LENGTHS[state.guesses.length]) /
 											1000
-									  }s)`
+										}s)`
 									: "Next track"}
 							</button>
 						) : (
@@ -626,6 +619,17 @@ function Game(props: Props) {
 								The Album of the last Track was <b>{state.solution!.album}</b>{" "}
 								from <b>{state.solution!.artists.join(" & ")}</b> and the Title
 								was <b>{state.solution!.title}</b> added by{" "}
+								{usernames.get(state.solution!.addedBy)}
+							</p>
+						</div>
+					);
+				case "year":
+					return (
+						<div className={classes.lastSolution}>
+							<p>
+								The year of the last Track was{" "}
+								<b>{state.solution!.release_date}</b> and the Title was{" "}
+								<b>{state.solution!.title}</b> added by{" "}
 								{usernames.get(state.solution!.addedBy)}
 							</p>
 						</div>
