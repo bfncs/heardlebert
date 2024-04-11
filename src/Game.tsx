@@ -242,8 +242,10 @@ function Game(props: Props) {
 	const [loadingAlbum, setLoadingAlbum] = useState(true);
 	const [albumImages, setAlbumImages] = useState(new Map<string, string>());
 	const [usernames, setUsernames] = useState(new Map<string, string>());
+	const [loadUsernames, setLoadUsernames] = useState(true);
 	const gameState = useAppSelector((state) => state.gameState);
 	const navigate = useNavigate();
+	getAllUsernames(setLoadUsernames, gameState.usernames, setUsernames);
 
 	useEffect(() => {
 		setState(initialState);
@@ -672,7 +674,6 @@ function Game(props: Props) {
 		if (hasBeenSuccessfullyGuessed) {
 			playSongLength = GUESSABLE_TRACK_LENGTHS[5];
 		}
-
 		return (
 			<div className={classes.game}>
 				<div className={classes.playListName}>
