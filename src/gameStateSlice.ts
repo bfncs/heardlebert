@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
-import { Track } from "./tracks";
+import { Track } from "./types/types";
 // Define a type for the slice state
 export interface GameState {
 	level: "easy" | "medium" | "hard";
-	gameMode: "title" | "artist" | "both" | "album" | "user" | "year";
+	gameMode: GameMode;
 	songSize: number;
 
 	songs: Track[];
@@ -16,9 +16,18 @@ export interface GameState {
 	usernames: string[];
 }
 
+export enum GameMode {
+	TITLE = "title",
+	ARTIST = "artist",
+	BOTH = "both",
+	ALBUM = "album",
+	USER = "user",
+	YEAR = "year",
+}
+
 export const initialState: GameState = {
 	level: "hard",
-	gameMode: "both",
+	gameMode: GameMode.BOTH,
 	songSize: 10,
 	songs: [],
 	allSongs: [],
@@ -40,12 +49,7 @@ export const gameStateSlice = createSlice({
 		setLevel: (state, action: PayloadAction<"easy" | "medium" | "hard">) => {
 			state.level = action.payload;
 		},
-		setGameMode: (
-			state,
-			action: PayloadAction<
-				"title" | "artist" | "both" | "album" | "user" | "year"
-			>,
-		) => {
+		setGameMode: (state, action: PayloadAction<GameMode>) => {
 			state.gameMode = action.payload;
 		},
 		setSongSize: (state, action: PayloadAction<number>) => {

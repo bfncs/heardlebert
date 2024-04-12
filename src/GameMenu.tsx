@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAppSelector } from "./hook";
 import { connect } from "react-redux";
 import {
+	GameMode,
 	setAllSongs,
 	setGameMode,
 	setLevel,
@@ -15,8 +16,8 @@ import {
 	setUsernames,
 } from "./gameStateSlice";
 import Spinner from "./Spinner";
-import { Track } from "./tracks";
 import PlaylistSelector from "./PlaylistSelector";
+import { Track } from "./types/types";
 
 const STANDARD_PLAYLISTS = [
 	{ id: "0alpnkjV6cDmzJRxts58u5", title: "Metropolis" },
@@ -221,15 +222,7 @@ function GameMenu(props: Props) {
 				<select
 					value={gameState.gameMode}
 					onChange={(event) => {
-						props.setGameMode(
-							event.target.value as
-								| "title"
-								| "album"
-								| "both"
-								| "artist"
-								| "user"
-								| "year",
-						);
+						props.setGameMode(event.target.value as GameMode);
 					}}
 				>
 					<option value="title">Title, Artist and User</option>

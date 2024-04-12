@@ -1,6 +1,4 @@
-import { Track } from "./tracks";
-import { Simulate } from "react-dom/test-utils";
-import play = Simulate.play;
+import { Track } from "./types/types";
 
 async function fetchAccessToken() {
 	const CLIENT_ID = "cb693403b2dd4814afabe873c0646cf5";

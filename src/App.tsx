@@ -24,6 +24,7 @@ function App(props: Props) {
 							path="/game"
 							element={<Game spotifyIframeApi={props.spotifyIframeApi} />}
 						/>
+						{/*<Route path="/timeGame" element={<TimeGame />} />*/}
 					</Routes>
 				</Router>
 			</div>
