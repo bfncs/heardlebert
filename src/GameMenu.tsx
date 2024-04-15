@@ -144,7 +144,7 @@ function GameMenu(props: Props) {
 		playlist.tracks.push(...songs);
 		props.setAllSongs(shuffle(playlist.tracks));
 		props.setUsernames([...new Set(uniqueUsers)]);
-		navigate("/game");
+		navigate("/timeGame");
 	}
 
 	useEffect(() => {

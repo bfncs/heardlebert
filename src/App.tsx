@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import GameMenu from "./GameMenu";
 import Game from "./Game";
 import classes from "./App.module.scss";
+import TimeGame from "./TimeGame";
 
 interface Props {
 	spotifyIframeApi: IframeApi;
@@ -24,7 +25,10 @@ function App(props: Props) {
 							path="/game"
 							element={<Game spotifyIframeApi={props.spotifyIframeApi} />}
 						/>
-						{/*<Route path="/timeGame" element={<TimeGame />} />*/}
+						<Route
+							path="/timeGame"
+							element={<TimeGame spotifyIframeApi={props.spotifyIframeApi} />}
+						/>
 					</Routes>
 				</Router>
 			</div>

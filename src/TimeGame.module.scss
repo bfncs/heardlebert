@@ -1,0 +1,154 @@
+.game {
+	margin-top: 10px;
+}
+
+.score {
+	font-size: 24px;
+	font-weight: 600;
+	color: #000000;
+}
+
+.tracksLength {
+	font-size: 24px;
+	font-weight: 600;
+	color: #000000;
+}
+
+button {
+	font-size: 24px;
+	font-weight: 600;
+	cursor: pointer;
+	border-radius: 8px;
+	height: 48px;
+	width: 155px;
+
+	@media (max-width: 400px) {
+		font-size: 16px;
+	}
+}
+
+.endGameDiv {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 25px;
+}
+
+.endGame {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 25px;
+
+	p {
+		font-size: 36px;
+		line-height: 1.5;
+		color: #6951ff;
+		font-weight: 600;
+	}
+}
+
+.backToMenu {
+	background: #ffffff;
+	border: 3px solid #6951ff;
+	color: #6951ff;
+	width: 185px;
+
+	&:hover {
+		background: #1700a8;
+		border-color: #1700a8;
+		color: #ffffff;
+	}
+
+	&:disabled {
+		color: #000000;
+		background: lightgrey;
+		border-color: darkgrey;
+		cursor: not-allowed;
+	}
+}
+
+.formButtons {
+	margin-top: 10px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: 25px;
+
+	.hearMore {
+		background: #ffffff;
+		border: 3px solid #6951ff;
+		color: #6951ff;
+
+		&:hover {
+			background: #1700a8;
+			border-color: #1700a8;
+			color: #ffffff;
+		}
+
+		&:disabled {
+			color: #000000;
+			background: lightgrey;
+			border-color: darkgrey;
+			cursor: not-allowed;
+		}
+	}
+
+	.submit {
+		background: #6951ff;
+		border: 3px solid #6951ff;
+		color: #ffffff;
+
+		&:hover {
+			background: #1700a8;
+			border: 3px solid #1700a8;
+		}
+	}
+}
+
+.nextTrack {
+	display: block;
+	margin-top: 10px;
+	background: #ffffff;
+	border: 3px solid #6951ff;
+	border-radius: 8px;
+	color: #6951ff;
+	height: 48px;
+	width: auto;
+	font-size: 24px;
+	font-weight: 600;
+	cursor: pointer;
+	align-self: center;
+	@media (max-width: 400px) {
+		font-size: 16px;
+	}
+	&:hover {
+		background: #1700a8;
+		border: 3px solid #1700a8;
+		color: #ffffff;
+	}
+}
+
+.gameForm {
+	margin-top: 15px;
+}
+
+.songSpan {
+	font-size: 12px;
+	font-weight: 400;
+	color: #000000;
+	border-radius: 16px;
+	border: 2px solid #6951ff;
+	padding: 4px 8px;
+}
+
+.timeLine {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	gap: 25px;
+}
