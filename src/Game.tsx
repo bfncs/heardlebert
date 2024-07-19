@@ -26,11 +26,11 @@ import {
 	deleteYearDuplicates,
 	getEverythingRightText,
 	getJustArtistRightText,
-	getPlaceholderForInput,
 	getPointsForGuess,
 } from "./utils/helperMethods";
 import { GuessList } from "./GuessList";
 import { Solution } from "./Solution";
+import { GuessForm } from "./GuessForm";
 
 const initialState: RoundState = {
 	track: 0,
@@ -194,7 +194,6 @@ function Game(props: Props) {
 		const gamemode = gameState.gameMode;
 		const spotifyApiFrame = props.spotifyIframeApi;
 		const numberOfSkips = gameState.numberOfSkips;
-		const [inputValue, setInputValue] = useState("");
 		const sortedTracks = useMemo(
 			() => deleteDuplicates(gameState.allSongs),
 			[gameState.allSongs],
@@ -226,10 +225,10 @@ function Game(props: Props) {
 			props.setNumberOfSkips(gameStateSlice.getInitialState().numberOfSkips);
 			navigate("/");
 		};
-		const tryGuess = (event: SyntheticEvent) => {
+		const tryGuess = (guess: string) => {
 			if (
 				!isCorrectAnswer(
-					inputValue,
+					guess,
 					songs[state.track],
 					gamemode,
 					gamemode === "user" ? usernames : undefined,
@@ -240,13 +239,12 @@ function Game(props: Props) {
 			}
 			setState({
 				...state,
-				guesses: [...state.guesses, inputValue],
+				guesses: [...state.guesses, guess],
 			});
-			setInputValue("");
 			if (
 				state.guesses.length >= GUESSABLE_TRACK_LENGTHS.length - 1 &&
 				!isCorrectAnswer(
-					inputValue,
+					guess,
 					songs[state.track],
 					gamemode,
 					gamemode === "user" ? usernames : undefined,
@@ -254,8 +252,8 @@ function Game(props: Props) {
 			) {
 				goToNextSong(0);
 			}
-			event.preventDefault();
 		};
+
 		const getDatalist = (sortedTracks: Track[]) => {
 			switch (gamemode) {
 				case GameMode.TITLE:
@@ -401,75 +399,35 @@ function Game(props: Props) {
 				state.guesses.length < GUESSABLE_TRACK_LENGTHS.length - 1;
 			const noMoreSkipsAllowed = numberOfSkips != null && numberOfSkips === 0;
 			return (
-				<form
-					onSubmit={(event) => {
-						tryGuess(event);
+				<GuessForm
+					isSkippingAllowed={isSkippingAllowed}
+					noMoreSkipsAllowed={noMoreSkipsAllowed}
+					tryGuess={tryGuess}
+					userNames={usernames}
+					gameMode={gamemode}
+					tracks={sortedTracks}
+					guessableTrackLengths={GUESSABLE_TRACK_LENGTHS}
+					guesses={state.guesses}
+					onSkip={() => {
+						if (isSkippingAllowed) {
+							setState({
+								...state,
+								guesses: [...state.guesses, "skipped"],
+							});
+							if (numberOfSkips) {
+								props.setNumberOfSkips(numberOfSkips - 1);
+							}
+						} else {
+							goToNextSong(0);
+						}
 					}}
-				>
-					<div className={classes.formRow}>
-						<input
-							className={classes.input}
-							placeholder={getPlaceholderForInput(gamemode)}
-							type="text"
-							value={inputValue}
-							onChange={(event) => setInputValue(event.target.value)}
-							list="tracks"
-						/>
-						<datalist id="tracks">{getDatalist(sortedTracks)}</datalist>
-					</div>
-					<div className={classes.formButtons}>
-						{!noMoreSkipsAllowed ? (
-							<button
-								className={classes.hearMore}
-								type="button"
-								onClick={() => {
-									if (isSkippingAllowed) {
-										setState({
-											...state,
-											guesses: [...state.guesses, "skipped"],
-										});
-										if (numberOfSkips) {
-											props.setNumberOfSkips(numberOfSkips - 1);
-										}
-									} else {
-										goToNextSong(0);
-									}
-								}}
-							>
-								{isSkippingAllowed
-									? `Skip (+${
-											(GUESSABLE_TRACK_LENGTHS[state.guesses.length + 1] -
-												GUESSABLE_TRACK_LENGTHS[state.guesses.length]) /
-											1000
-										}s)`
-									: "Next track"}
-							</button>
-						) : (
-							<button
-								className={classes.endGame}
-								type="button"
-								onClick={() => {
-									if (numberOfSkips != null) {
-										props.setNumberOfSkips(-1);
-									}
-									goToNextSong(0);
-								}}
-							>
-								End Game
-							</button>
-						)}
-
-						<button
-							className={classes.submit}
-							type="submit"
-							onClick={(event) => {
-								tryGuess(event);
-							}}
-						>
-							Submit
-						</button>
-					</div>
-				</form>
+					onEndGame={() => {
+						if (numberOfSkips != null) {
+							setNumberOfSkips(-1);
+						}
+						goToNextSong(0);
+					}}
+				/>
 			);
 		};
 		const getSolutionIfGuessedOrForm = () => {
