@@ -26,7 +26,7 @@ interface Props {
 const getSuggestions = (
 	gameMode: GameMode,
 	sortedTracks: Track[],
-	usernames: Map<String, String>,
+	usernames: Map<string, string>,
 ): string[] => {
 	switch (gameMode) {
 		case GameMode.TITLE:
@@ -45,9 +45,9 @@ const getSuggestions = (
 				(track) => `${track.title} by ${track.artists.join(", ")}`,
 			);
 		case GameMode.USER:
-			return deleteUserDuplicates(sortedTracks).map((track) =>
-				usernames.get(track.addedBy),
-			);
+			return deleteUserDuplicates(sortedTracks).flatMap((track) => {
+				return usernames.get(track.addedBy) || "";
+			});
 		case GameMode.ALBUM:
 			return deleteAlbumDuplicates(sortedTracks).map(
 				(track) =>
