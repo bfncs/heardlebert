@@ -31,6 +31,7 @@ import {
 } from "./utils/helperMethods";
 import { GuessList } from "./GuessList";
 import { Solution } from "./Solution";
+import { AutoComplete } from "primereact/autocomplete";
 
 const initialState: RoundState = {
 	track: 0,
@@ -256,6 +257,43 @@ function Game(props: Props) {
 			}
 			event.preventDefault();
 		};
+		const getSuggestions = (sortedTracks: Track[]): string[] => {
+			switch (gamemode) {
+				case GameMode.TITLE:
+					return sortedTracks.map(
+						(track) =>
+							`${track.title} - ${track.artists.join(
+								", ",
+							)} added by ${usernames.get(track.addedBy)}`,
+					);
+				case GameMode.ARTIST:
+					return deleteArtistDuplicates(sortedTracks).map((track) =>
+						track.artists.join(", "),
+					);
+				case GameMode.BOTH:
+					return sortedTracks.map(
+						(track) => `${track.title} by ${track.artists.join(", ")}`,
+					);
+				case GameMode.USER:
+					return deleteUserDuplicates(sortedTracks).map((track) =>
+						usernames.get(track.addedBy),
+					);
+				case GameMode.ALBUM:
+					return deleteAlbumDuplicates(sortedTracks).map(
+						(track) =>
+							`${track.album} - ${track.title} by ${track.artists.join(", ")}`,
+					);
+				case GameMode.YEAR:
+					return deleteYearDuplicates(sortedTracks).map(
+						(track) => track.release_date,
+					);
+			}
+
+			return sortedTracks.map(
+				(track) => `${track.artists[0]} - ${track.title}`,
+			);
+		};
+
 		const getDatalist = (sortedTracks: Track[]) => {
 			switch (gamemode) {
 				case GameMode.TITLE:
@@ -407,15 +445,15 @@ function Game(props: Props) {
 					}}
 				>
 					<div className={classes.formRow}>
-						<input
-							className={classes.input}
-							placeholder={getPlaceholderForInput(gamemode)}
-							type="text"
+						<AutoComplete
 							value={inputValue}
+							suggestions={getSuggestions(sortedTracks).filter((s) =>
+								s.toLowerCase().includes(inputValue.toLowerCase()),
+							)}
 							onChange={(event) => setInputValue(event.target.value)}
-							list="tracks"
+							completeMethod={(event) => {}}
+							pt={{ loadingIcon: { style: { display: "none" } } }}
 						/>
-						<datalist id="tracks">{getDatalist(sortedTracks)}</datalist>
 					</div>
 					<div className={classes.formButtons}>
 						{!noMoreSkipsAllowed ? (
