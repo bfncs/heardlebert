@@ -29,15 +29,19 @@ const STANDARD_PLAYLISTS = [
 	{ id: "37i9dQZF1DXaKIA8E7WcJj", title: "All Out 60s" },
 	{ id: "37i9dQZF1DXcBWIGoYBM5M", title: "Today's Top Hits" },
 	{ id: "37i9dQZEVXbMDoHDwVN2tF", title: "Top 50 Global" },
-	{ id: "37i9dQZF1DX0XUsuxWHRQd", title: "Rap Caviar" },
 	{ id: "37i9dQZF1DWXRqgorJj26U", title: "Rock Classics" },
+	{ id: "37i9dQZF1DX1LCddwjCqDK", title: "Weihnachtsklassiker" },
+	{ id: "37i9dQZF1DX6R7QUWePReA", title: "Christmas Classics" },
+	{ id: "37i9dQZF1DWWOaP4H0w5b0", title: "Metal Essentials" },
+	{ id: "37i9dQZF1DWTSKFpOdYF1r", title: "Alternative 80s" },
 	{ id: "37i9dQZF1DWWMOmoXKqHTD", title: "Songs To Sing to in the Car" },
 	{ id: "37i9dQZF1DWSqmBTGDYngZ", title: "Songs To Sing in the Shower" },
 	{ id: "37i9dQZF1DX186v583rmzp", title: "I Love My 90s HipHop" },
 	{ id: "6XwoYpZYcc3z76X5wzfA0W", title: "Ohrwürmer aus der Hölle" },
 	{ id: "37i9dQZF1DX4pUKG1kS0Ac", title: "Guilty Pleasures" },
-	{ id: "37i9dQZF1DX1LCddwjCqDK", title: "Weihnachtsklassiker" },
-	{ id: "37i9dQZF1DX6R7QUWePReA", title: "Christmas Classics" },
+	{ id: "37i9dQZF1DWVA1Gq4XHa6U", title: "Gold School" },
+	{ id: "37i9dQZF1DX49jUV2NfGku", title: "Rock Solid" },
+	{ id: "37i9dQZF1DXconM2hS1KVZ", title: "Sommerklassiker" },
 ];
 
 const STANDARD_PLAYLIST_ID = STANDARD_PLAYLISTS[0].id;
